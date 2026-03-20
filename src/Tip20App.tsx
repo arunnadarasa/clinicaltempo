@@ -60,7 +60,7 @@ export default function Tip20App() {
   const [walletAddress, setWalletAddress] = useState('')
   const [currencyCode, setCurrencyCode] = useState('USD')
   const [quoteTokenAddress, setQuoteTokenAddress] = useState(Addresses.pathUsd)
-  type FeeTokenPreset = 'custom' | 'stargate_usdc_e' | 'pathUSD' | 'alphaUSD'
+  type FeeTokenPreset = 'custom' | 'stargate_usdc_e' | 'pathUSD' | 'alphaUSD' | 'betaUSD' | 'thetaUSD'
   const [feeTokenPreset, setFeeTokenPreset] = useState<FeeTokenPreset>('custom')
   const [feeTokenForWrites, setFeeTokenForWrites] = useState('')
 
@@ -120,6 +120,14 @@ export default function Tip20App() {
   const bridgedUsdcFeeTokenMainnet = '0x20c000000000000000000000b9537d11c60e8b50'
   const sponsorUrl = 'https://sponsor.moderato.tempo.xyz'
   const sponsoredFees = sponsoredFeesEnabled && network === 'testnet'
+
+  // Tempo testnet faucet assets (requesting the faucet funds all four).
+  const alphaUsdFeeToken = '0x20c0000000000000000000000000000000000001'
+  const betaUsdFeeToken = '0x20c0000000000000000000000000000000000002'
+  const thetaUsdFeeToken = '0x20c0000000000000000000000000000000000003'
+
+  const [faucetLoading, setFaucetLoading] = useState(false)
+  const [faucetMessage, setFaucetMessage] = useState('')
 
   const getWalletTransport = () => {
     if (!window.ethereum) throw new Error('Wallet not found.')
@@ -340,13 +348,17 @@ export default function Tip20App() {
     if (feeTokenPreset === 'custom') return
     if (feeTokenPreset === 'stargate_usdc_e') setFeeTokenForWrites(bridgedUsdcFeeTokenMainnet)
     if (feeTokenPreset === 'pathUSD') setFeeTokenForWrites(Addresses.pathUsd)
-    if (feeTokenPreset === 'alphaUSD' && network !== 'mainnet')
-      setFeeTokenForWrites('0x20c0000000000000000000000000000000000001')
-  }, [feeTokenPreset])
+    if (feeTokenPreset === 'alphaUSD' && network !== 'mainnet') setFeeTokenForWrites(alphaUsdFeeToken)
+    if (feeTokenPreset === 'betaUSD' && network !== 'mainnet') setFeeTokenForWrites(betaUsdFeeToken)
+    if (feeTokenPreset === 'thetaUSD' && network !== 'mainnet') setFeeTokenForWrites(thetaUsdFeeToken)
+  }, [feeTokenPreset, network])
 
   useEffect(() => {
-    // AlphaUSD is not offered on Tempo mainnet to reduce confusion.
-    if (network === 'mainnet' && feeTokenPreset === 'alphaUSD') {
+    // Alpha/Beta/Theta are not offered on Tempo mainnet to reduce confusion.
+    if (
+      network === 'mainnet' &&
+      (feeTokenPreset === 'alphaUSD' || feeTokenPreset === 'betaUSD' || feeTokenPreset === 'thetaUSD')
+    ) {
       setFeeTokenPreset('stargate_usdc_e')
       setFeeTokenForWrites(bridgedUsdcFeeTokenMainnet)
     }
@@ -389,6 +401,44 @@ export default function Tip20App() {
       pushLog(`Connect wallet failed: ${message}`)
     } finally {
       setLoading(false)
+    }
+  }
+
+  const requestTempoTestnetFaucet = async () => {
+    setFaucetLoading(true)
+    setFaucetMessage('')
+    try {
+      if (!walletAddress) throw new Error('Connect wallet first.')
+      if (network !== 'testnet') throw new Error('Faucet is available on Tempo testnet only.')
+
+      // Proxied through the backend to avoid browser CORS issues.
+      const res = await fetch('/api/tempo/faucet', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ address: walletAddress.toLowerCase() }),
+      })
+
+      const raw = await res.text()
+      let data = null
+      try {
+        data = raw ? JSON.parse(raw) : null
+      } catch {
+        data = null
+      }
+
+      if (!res.ok) {
+        const details = data?.details || data?.error || raw
+        throw new Error(`Tempo faucet failed (${res.status}): ${String(details || 'unknown error')}`)
+      }
+
+      setFaucetMessage('Faucet requested. Wait a moment, then refresh your wallet balances.')
+      pushLog('Tempo testnet faucet requested (path/Alpha/Beta/Theta).')
+    } catch (err) {
+      const message = getErrorMessage(err)
+      setFaucetMessage(message)
+      pushLog(`Faucet request failed: ${message}`)
+    } finally {
+      setFaucetLoading(false)
     }
   }
 
@@ -1074,7 +1124,13 @@ export default function Tip20App() {
               >
                 <option value="stargate_usdc_e">Stargate USDC.e (recommended)</option>
                 <option value="pathUSD">pathUSD</option>
-                {network === 'mainnet' ? null : <option value="alphaUSD">AlphaUSD</option>}
+                {network === 'mainnet' ? null : (
+                  <>
+                    <option value="alphaUSD">AlphaUSD</option>
+                    <option value="betaUSD">BetaUSD</option>
+                    <option value="thetaUSD">ThetaUSD</option>
+                  </>
+                )}
                 <option value="custom">Custom</option>
               </select>
               <input
@@ -1087,6 +1143,51 @@ export default function Tip20App() {
               </p>
             </label>
           </div>
+          {network === 'testnet' ? (
+            <div className="api-list">
+              <code>Tempo testnet faucet funds:</code>
+              <code>{`pathUSD: ${Addresses.pathUsd}`}</code>
+              <code>{`AlphaUSD: ${alphaUsdFeeToken}`}</code>
+              <code>{`BetaUSD: ${betaUsdFeeToken}`}</code>
+              <code>{`ThetaUSD: ${thetaUsdFeeToken}`}</code>
+              <button
+                className="secondary"
+                onClick={requestTempoTestnetFaucet}
+                disabled={faucetLoading || !walletAddress}
+              >
+                {faucetLoading ? 'Requesting...' : 'Request all 4 USD'}
+              </button>
+              {faucetMessage ? <p>{faucetMessage}</p> : null}
+              <p>
+                Faucet docs:{' '}
+                <a href="https://docs.tempo.xyz/quickstart/faucet" target="_blank" rel="noreferrer">
+                  docs.tempo.xyz/quickstart/faucet
+                </a>
+              </p>
+            </div>
+          ) : (
+            <div className="api-list">
+              <code>Tempo mainnet USDC.e (fee token):</code>
+              <p>
+                Acquire `USDC.e` via Stargate Finance, then keep Fee Token set to{' '}
+                <code>Stargate USDC.e</code>.
+              </p>
+              <p>
+                Stargate transfer docs:{' '}
+                <a href="https://docs.stargate.finance/developers/tutorials/evm" target="_blank" rel="noreferrer">
+                  EVM tutorial
+                </a>
+                {' · '}
+                <a
+                  href="https://docs.stargate.finance/developers/protocol-docs/transfer"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  protocol transfer
+                </a>
+              </p>
+            </div>
+          )}
           <div className="actions">
             <button
               className="secondary"

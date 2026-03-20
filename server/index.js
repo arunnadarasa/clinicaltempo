@@ -128,6 +128,60 @@ app.get('/api/health', (_req, res) => {
   res.json({ ok: true, service: 'ai-proxy' })
 })
 
+// Tempo faucet proxy (testnet only).
+// Avoids browser CORS issues by letting the Vite/Express server call the faucet API.
+app.post('/api/tempo/faucet', async (req, res) => {
+  const { address } = req.body ?? {}
+
+  if (typeof address !== 'string') {
+    return res.status(400).json({
+      error: 'Invalid payload. Expected address as a string.',
+    })
+  }
+
+  const normalized = address.trim().toLowerCase()
+  if (!normalized.startsWith('0x') || normalized.length < 4) {
+    return res.status(400).json({
+      error: 'Invalid address format. Expected 0x-prefixed address.',
+    })
+  }
+
+  try {
+    const upstream = await fetch('https://docs.tempo.xyz/api/faucet', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ address: normalized }),
+    })
+
+    const raw = await upstream.text()
+    let data = null
+    try {
+      data = raw ? JSON.parse(raw) : null
+    } catch {
+      data = null
+    }
+
+    if (!upstream.ok) {
+      return res.status(upstream.status).json({
+        error: 'Tempo faucet request failed.',
+        upstreamStatus: upstream.status,
+        details: data ?? raw,
+      })
+    }
+
+    return res.status(upstream.status).json({
+      ok: true,
+      upstreamStatus: upstream.status,
+      result: data ?? raw,
+    })
+  } catch (error) {
+    return res.status(500).json({
+      error: 'Tempo faucet proxy failed.',
+      details: error instanceof Error ? error.message : 'Unknown error',
+    })
+  }
+})
+
 app.post('/api/battle/live/entry/:network', async (req, res) => {
   const network = req.params.network === 'mainnet' ? 'mainnet' : 'testnet'
   const { battleId, dancerId, amountDisplay } = req.body ?? {}
