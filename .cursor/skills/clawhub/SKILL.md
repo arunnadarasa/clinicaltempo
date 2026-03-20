@@ -1,246 +1,114 @@
 ---
 name: clawhub
-description: Explain DanceTempo superapp capabilities and troubleshoot Tempo/MPP (x402) + AgentMail integration issues. Use when the user asks for repo learning, “superapp” capability summaries, debugging payment/provider errors, or quick setup/runbook guidance.
+description: Explain DanceTech Protocol (DanceTempo superapp), capabilities, and troubleshoot Tempo/MPP (x402) + AgentMail + dance-extras live routes. Use for repo learning, protocol summaries, payment/provider errors, stale API 404s, or local runbook guidance.
 ---
 
-# ClawHub Skill: DanceTempo Superapp + Troubleshooting
+# ClawHub Skill: DanceTech Protocol + DanceTempo Troubleshooting
 
 ## Purpose
-Answer questions about this repo as an “agent playbook”, specifically:
-1) explaining what the DanceTempo superapp can do,
-2) giving a repeatable debugging path for Tempo/MPP (x402/402) and integration issues,
+Answer questions about this repo as an **agent playbook** for **DanceTech Protocol** (the pattern stack) and **DanceTempo** (the reference app), specifically:
+1) explaining what the protocol / superapp can do,
+2) giving a repeatable debugging path for Tempo/MPP (x402/402), AgentMail, and **`/dance-extras/live`** issues,
 3) providing “what to run / what to check” guidance without needing the user to open multiple files.
+
+## Naming (ground truth)
+- **DanceTech Protocol** — open pattern stack: dance-industry flows (battle, coaching, licensing, judging, sponsorship, reputation, AI billing, ops, fan pass) on **Tempo** + **MPP/x402**. Not a single on-chain contract; it’s **interoperable conventions + this reference codebase**.
+- **DanceTempo** — this repository’s **reference implementation** (hub, dedicated routes, `server/`).
 
 ## Quick Reference (choose your path)
 | User asks… | The skill should do… |
 |---|---|
-| “What can the superapp do?” | Use the superapp explanation template (layers + routes + how payments work + where to read next). |
-| “Why am I stuck on 402?” | Run the “x402/402 loop” diagnosis checklist and recommend the first concrete fix. |
-| “AgentMail fails: Inbox not found” | Run the AgentMail inbox scope checklist and recommend the API-key send strategy (if configured). |
-| “StableSocial jobs fail / 401/403” | Explain SIWX/auth requirements for polling and ask for wallet-consistency details. |
-| “Laso card create/polling fails” | Explain the Laso flow and when the repo falls back to demo mode. |
-| “How do I run locally?” | Provide the exact `npm run dev:full` + `.env` copy steps + ports. |
-| “Add/modify docs” | Suggest doc structure (superapp definition + route list + quick start) and avoid README template-bulk merges. |
+| “What is DanceTech Protocol?” | Explain pattern stack + Tempo/MPP + point to README + `DANCETECH_USE_CASES.md`. |
+| “What can the superapp do?” | Use the architecture template (layers + routes + payments + where to read next). |
+| “Why am I stuck on 402?” | Run the x402/402 loop checklist; ensure backend returns upstream `402` to `mppx`. |
+| “Cannot POST /api/dance-extras/live/…” (404 HTML) | **Stale or wrong process on port 8787** — restart `npm run server` / `dev:full`; verify `GET http://localhost:8787/api/dance-extras/live` returns JSON with `flowKeys`. |
+| “AgentMail fails: Inbox not found / Missing inbox_id” | Check `inbox_id` in body or `AGENTMAIL_INBOX_ID`; demo client uses `streetkode@agentmail.to` (`src/agentmailDemo.ts`). Prefer API-key send path when `AGENTMAIL_API_KEY` is set. |
+| “StableSocial jobs fail / 401/403” | SIWX/auth: same wallet for paid trigger and polling. |
+| “Laso card create/polling fails” | Laso flow + demo fallback when geo-restricted. |
+| “How do I run locally?” | `npm run dev:full` + `.env` + ports 5173 / 8787. |
+| “Add/modify docs” | README = product/protocol layer; `CLAWHUB.md` = learnings/failures; avoid README template-bulk merges. |
 
 ## Repo Primer (ground truth)
-This repo is a **DanceTech superapp** built around:
-- **Tempo**: on-chain payments and receipts (L1)
-- **MPP**: handled via `mppx` (client/server-side solving of `402 Payment Required`)
-- **Frontend hub + dedicated route apps**: full-screen flows for major use cases
-- **Backend**: Express API that creates/verifies payment intents and integrates/polls third parties.
+This repo implements **DanceTech Protocol** as a **DanceTempo superapp**:
+- **Tempo**: on-chain settlement and receipts  
+- **MPP**: `mppx` client/server for `402 Payment Required`  
+- **Frontend**: hub + dedicated route apps  
+- **Backend**: Express — intents, `402` passthrough, proxies  
 
-Key files you should use as the authoritative source of truth:
-- `README.md`: user-facing superapp definition + quick start + route list
-- `DANCETECH_USE_CASES.md`: canonical flow steps + API mappings + testing runbook
-- `CLAWHUB.md`: success/failure history + best practices + debugging patterns
-- `server/index.js`: the actual integration behavior (especially x402 passthrough and AgentMail send)
-- `vite.config.ts`: dev proxy (`/api` -> backend on `http://localhost:8787`)
+Key files:
+- `README.md` — protocol positioning + quick start + route list  
+- `DANCETECH_USE_CASES.md` — flow steps + API mappings  
+- `CLAWHUB.md` — successes, failures, best practices  
+- `server/index.js` — integrations, `executeDanceExtraFlow`, `POST /api/dance-extras/live/...`, AgentMail  
+- `vite.config.ts` — dev proxy `/api` → `http://localhost:8787`  
+- `src/main.tsx` — `/dance-extras` **and** `/dance-extras/*` → `ExtraDanceApp`  
 
-## Superapp Explanation Template (self-contained)
-When the user requests an explanation, respond using this structure (fill in the obvious values):
-
+## Superapp Explanation Template
 ### 1) One-liner
-DanceTempo is a super app for the DanceTech industry combining Tempo payments, MPP/x402 integration handling, and a hub of dedicated use-case flows.
+**DanceTech Protocol** standardizes how dance products handle money and ops on **Tempo** with **MPP/x402**; **DanceTempo** is the reference superapp that implements it.
 
 ### 2) Architecture in layers
-- **Hub (`/`)**: main entry + “use-case selection” experience + global transaction history.
-- **Dedicated frontends**: full-screen flows per use case (live testnet/mainnet UX, wallet flow, receipts, recovery).
-- **Backend (`server/`)**: Express API that:
-  - creates/verifies payment intents and emits receipts,
-  - returns upstream `402` challenges so `mppx` can solve,
-  - proxies/integrates with paid APIs (AgentMail, StablePhone, StableSocial, StableTravel, Laso, Suno, weather/maps/logistics, etc.).
-- **Integrations**: paid rails for operations and commerce-style endpoints (the repo demonstrates a consistent “pay then poll / pay then send” pattern).
+- **Hub (`/`)** — use-case selection + transaction history  
+- **Dedicated frontends** — `/battle`, `/coaching`, `/beats`, `/dance-extras`, `/kicks`, etc.  
+- **Backend** — MPP charges, `402` preservation, third-party proxies  
+- **Integrations** — AgentMail, travel, weather, KicksDB, OpenAI MPP, etc.  
 
 ### 3) Dedicated routes (what’s where)
-- `/`: main hub (all use cases + global transaction history)
-- `/battle`: battle entry + auto payout (live)
-- `/coaching`: coaching minutes marketplace (live)
-- `/beats`: beat API licensing (live)
-- `/card`: virtual debit card (Laso/MPP + demo fallback)
-- `/travel`: travel + logistics integrations (StableTravel, Aviationstack, Google Maps)
-- `/email`: AgentMail ops (wallet-paid relay + send)
-- `/ops`: AgentMail + StablePhone console
-- `/social`: StableSocial
-- `/music`: Suno
-- `/kicks`: KicksDB (live MPP + simulate)
-- `/tip20`: TIP-20 token launch & post-launch ops
+Include these in explanations (extend from README as needed):
+- `/dance-extras` — seven core flows; **live MPP**: `POST /api/dance-extras/live/:flowKey/:network`  
+- `/battle`, `/coaching`, `/beats` — live Tempo demos  
+- `/email`, `/ops` — AgentMail + phone  
+- `/kicks`, `/travel`, `/weather`, `/music`, `/parallel`, `/tip20`, etc.  
 
-### 4) How payments work (the short mental model)
-- Some third-party endpoints are **x402**: they respond with `402 Payment Required` plus a challenge.
-- The repo’s backend should **preserve and return** that `402` challenge back to the client.
-- The `mppx` client then solves the challenge and retries, resulting in an authorized response.
+### 4) Payments (short mental model)
+- Upstream **x402** → backend must return the **challenge** to the browser → `mppx` solves → retry with `payment` / `payment-receipt` headers.  
 
 ### 5) Where to read next
-- For flow-by-flow details and endpoint mappings: `DANCETECH_USE_CASES.md`
-- For implementation + provider edge cases: `server/index.js`
+- `DANCETECH_USE_CASES.md`, `CLAWHUB.md`, `server/index.js`  
 
-## Tempo & MPP Cheat Sheet (DanceTempo-specific)
-Networks used by the repo:
-- **Tempo testnet (Moderato)**: chain id `42431`, typical fee/path asset: `pathUSD`
-- **Tempo mainnet**: chain id `4217`, common fee token: `USDC` (as configured)
+## Tempo & MPP Cheat Sheet
+- **Testnet (Moderato):** chain id `42431`  
+- **Mainnet:** chain id `4217`  
+- Amounts: often **decimal strings**; server handlers use patterns like `toFixed(2)` for charges.  
 
-Payment patterns you should assume:
-- **`charge`**: a direct paid operation (often one-time settlement)
-- **`session`**: metered or repeat usage pattern (e.g., “ticks over time”)
+## Local Runbook
+1. `npm install`  
+2. `cp .env.example .env`  
+3. `npm run dev:full` (or `npm run server` + `npm run dev`)  
+4. Open `http://localhost:5173`  
+5. If **any** `/api` route 404s with Express “Cannot POST”, **restart the API** — old `node` process is common.  
 
-Critical protocol behavior:
-- If upstream returns `402`, you generally must return that upstream challenge to the `mppx` client, not swallow it into a generic error.
-
-## Local Runbook (fastest way to reproduce)
-1. Install:
-   - `npm install`
-2. Configure env:
-   - `cp .env.example .env`
-3. Run:
-   - Terminal 1: `npm run server` (backend on `PORT`, default `8787`)
-   - Terminal 2: `npm run dev` (Vite frontend, typical `5173`)
-   - Or one command: `npm run dev:full`
-4. Visit:
-   - `http://localhost:5173` (hub)
-   - `http://localhost:5173/<route>` (e.g. `/battle`)
-
-Repo-provided dev proxy:
-- Vite proxies `/api` -> `http://localhost:8787`.
-
-## Environment Variables (minimum set)
-Use `.env.example` as the canonical list. Common ones for the flows covered by this skill:
-
-OpenAI (optional, for server-side explanation proxy):
-- `OPENAI_API_KEY`
-- `OPENAI_MODEL` (default `gpt-4o-mini`)
-
-Tempo / MPP:
-- `TMPO_TESTNET=true|false`
-- `MPP_RECIPIENT`
-- `PAYMENT_MODE` (often `mock` while scaffolding)
-
-AgentMail (email/ops):
-- `AGENTMAIL_API_KEY` (if set, repo uses API-key send strategy)
-- `AGENTMAIL_BASE_URL` (default `https://api.agentmail.to`)
-- `AGENTMAIL_MPP_BASE_URL` (default `https://mpp.api.agentmail.to`)
-- `AGENTMAIL_INBOX_ID` (used by send + inbox create flows)
-
-Other integrations (depending on route):
-- KicksDB: `KICKSDB_API_KEY`, `KICKSDB_BASE_URL`, `KICKSDB_SEARCH_PATH`
-- Laso: `CARD_PROVIDER`, `LASO_BASE_URL`, `LASO_MPP_PATH`, `LASO_CARD_STATUS_PATH`
-- StablePhone: `STABLEPHONE_BASE_URL`, `STABLEPHONE_CALL_PATH`, `STABLEPHONE_STATUS_PATH`
-- StableSocial: `STABLESOCIAL_BASE_URL`, `STABLESOCIAL_INSTAGRAM_PROFILE_PATH`, `STABLESOCIAL_JOBS_PATH`
-- StableTravel + weather/maps/logistics: their respective `*_API_KEY` + `*_BASE_URL` values in `.env.example`
+## Environment Variables (minimum)
+See `.env.example`. Highlights:
+- **MPP:** `MPP_RECIPIENT`, `MPP_SECRET_KEY` (server)  
+- **AgentMail:** `AGENTMAIL_API_KEY`, `AGENTMAIL_INBOX_ID` or per-request `inbox_id`, `AGENTMAIL_BASE_URL`, `AGENTMAIL_MPP_BASE_URL`  
 
 ## Troubleshooting Playbooks
 
-### A) “My payment keeps returning 402” (x402/402 loop)
-Goal: stop the loop by verifying the repo is returning upstream challenges and forwarding the solved auth correctly.
+### A) x402 / 402 loop
+Same as before: preserve upstream `402`, correct base URL, forward payment headers, match network, decimal amounts.
 
-Diagnosis checklist (in order):
-1. Network mismatch:
-   - Ensure user-selected network (testnet/mainnet) matches the endpoint and the backend config.
-2. Wrong endpoint base URL for the paid service:
-   - Many paid endpoints require the specific x402-capable base.
-3. Backend error handling:
-   - If upstream returns `402`, the backend should return the upstream `402` response/challenge to the client.
-4. Header forwarding:
-   - In “passthrough” mode (or when forwarding solved auth), ensure the request includes the correct `payment` / `payment-receipt` headers (the repo’s helper forwards `authorization`, `payment`, `payment-receipt` when present).
-5. Amount formatting:
-   - The server’s payment handlers expect a decimal-string amount and often use `toFixed(2)`; don’t pass base units.
+### B) `Cannot POST /api/dance-extras/live/...` (404)
+1. Restart API on **8787**  
+2. `GET http://localhost:8787/api/dance-extras/live` → must list `flowKeys`  
+3. Ensure Vite proxy targets 8787 (`vite.config.ts`)  
 
-What to ask the user (minimal):
-- Which route did they use and which backend route hit (or the failing path)?
-- Did the backend return an actual `402` challenge body/headers, or did it translate it into a generic error?
-- Which network (testnet/mainnet)?
+### C) AgentMail: `Missing inbox_id` / `Inbox not found`
+1. Set `inbox_id` in JSON or `AGENTMAIL_INBOX_ID` in `.env`  
+2. Demo: `AGENTMAIL_DEMO_INBOX_ID` in `agentmailDemo.ts`  
+3. With `AGENTMAIL_API_KEY`: wallet pays backend MPP charge, then Bearer send to `api.agentmail.to`  
 
-Likely first fix:
-- Verify the backend handler for the failing route preserves `402` and returns it (do not swallow).
+### D) StableSocial polling (401/403)
+Same wallet for trigger + poll; SIWX headers where required.  
 
-### B) AgentMail errors: `Inbox not found` or inbox scope mismatch
-Goal: get a working end-to-end send by using the repo’s best-practice strategy.
+### E) Laso card
+Geo fallback to demo; poll needs tokens from create.  
 
-Common causes (recognize quickly):
-1. `AGENTMAIL_INBOX_ID` not set and `inbox_id` not provided in request body.
-2. Inbox ID doesn’t match the scope / access that the send expects.
-3. Using passthrough mode when the integration expects API-key based send behavior.
-
-The working strategy (preferred when `AGENTMAIL_API_KEY` exists):
-1. Wallet pays the backend via Tempo MPP (`mppx` server charge).
-2. Backend sends the message via AgentMail’s API endpoint using:
-   - `Authorization: Bearer <AGENTMAIL_API_KEY>`
-   - endpoint pattern:
-     - `${AGENTMAIL_BASE_URL}/v0/inboxes/{inbox_id}/messages/send`
-3. Backend returns the upstream result wrapped with an MPP receipt.
-
-If `AGENTMAIL_API_KEY` is NOT set:
-- The backend falls back to a passthrough flow:
-  - it forwards the `payment` / `payment-receipt` headers to AgentMail’s MPP base endpoint
-  - and must preserve `402` so the client can solve and retry.
-
-What to ask the user:
-- Do they have `AGENTMAIL_API_KEY` set?
-- What is the exact error text and which endpoint returned it?
-- Are they using the same inbox id everywhere (`AGENTMAIL_INBOX_ID` vs `inbox_id`)?
-
-Likely first fix:
-- If API key is configured, set `AGENTMAIL_INBOX_ID` and use the send flow that calls `POST /api/ops/agentmail/send`.
-
-### C) StableSocial polling fails (401/403)
-Symptom pattern:
-- Trigger calls work, but `/jobs` polling fails.
-
-Why:
-- Polling requires SIWX-authenticated access, and it must come from the same wallet that paid the paid request.
-
-Likely fixes:
-- Ensure the same wallet/session is used for:
-  - the paid trigger call, and
-  - the subsequent polling call using the `token` param.
-
-What to ask:
-- Which exact polling endpoint / status code?
-- Did the user re-auth with a different wallet before polling?
-
-### D) Laso virtual card issues (create vs poll)
-Repo behavior to know:
-- Route `/api/card/create` can:
-  - charge via MPP when Laso returns `402`,
-  - retry Laso with payment headers,
-  - fallback to local mock/demo if Laso rejects with geo restrictions (e.g., “US only”).
-- Route `/api/card/:id` polls:
-  - uses Laso `/get-card-data` (via stored `id_token/refresh_token`),
-  - if missing those tokens, returns an error or mock demo telemetry.
-
-Likely fixes:
-- If “restricted/geo” rejection occurs:
-  - accept demo fallback (repo will return `demo: true` and `demoReason`),
-  - otherwise ensure Laso restrictions match your region.
-- If polling fails:
-  - confirm you’re using the same `cardId` returned by create.
-
-What to ask:
-- What do they see for `cardId` + `status` after create?
-- Which error occurs on poll: missing auth tokens vs upstream failure?
-
-### E) Invalid fee/token/network errors
-Likely causes:
-- Wrong network selection (testnet vs mainnet)
-- Wrong `MPP_RECIPIENT` or missing recipient config
-- Wrong amount format (decimal string vs base units)
-
-Fix:
-- Use testnet first.
-- Ensure `.env` values match the route and provider expectations.
-
-## Output Contracts (how you should write your answer)
-1. For “explain superapp”:
-   - include layers + route table + payment mental model.
-2. For debugging:
-   - Diagnose (most likely cause first),
-   - Give 2-5 concrete next steps,
-   - Ask for only the smallest set of missing info.
+## Output Contracts
+1. Explain: layers + routes + payment model.  
+2. Debug: most likely cause first, 2–5 steps, minimal questions.  
 
 ## Safety / Guardrails
-- Never ask the user to paste secrets from `.env`.
-- If the user mentions staging mainnet:
-  - suggest “testnet first” before spending real assets.
-- When editing docs:
-  - keep `README.md` coherent and avoid template-bulk merges.
-
-
+- Never ask users to paste `.env` secrets.  
+- Recommend **testnet** before mainnet.  
+- Keep README coherent when editing docs.  

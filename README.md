@@ -1,6 +1,8 @@
-# DanceTempo (`dancetempo`)
+# DanceTech Protocol · DanceTempo
 
-A **super app** for the DanceTech industry: one codebase that combines **Tempo** (L1 payments), **MPP / x402** (machine payments), and **viem** so organizers, dancers, fans, and ops teams can run real payment flows and third‑party integrations from a single hub.
+**DanceTech Protocol** is an open **pattern stack** for the dance industry: verifiable payments, session metering, media rights, reputation, AI usage billing, and event ops—**settled on [Tempo](https://tempo.xyz)** and **authorized via MPP / x402** so organizers, dancers, fans, and agents can pay APIs and each other with predictable receipts.
+
+**DanceTempo** (this repo, `dancetempo`) is the **reference implementation**: a single hub, dedicated full-screen flows, and a Node/Express API that encodes the protocol in production-style code. Fork it to ship your own product; treat [`DANCETECH_USE_CASES.md`](./DANCETECH_USE_CASES.md) as the behavioral contract.
 
 ---
 
@@ -13,8 +15,6 @@ A **super app** for the DanceTech industry: one codebase that combines **Tempo**
 | **Backend (`server/`)** | Express API: MPP intents, live payment verification, proxies to paid APIs (KicksDB, AgentMail, travel, weather, etc.). |
 | **Integrations** | Optional rails: AgentMail, StablePhone, StableSocial, StableTravel, Laso cards, Suno, Parallel, OpenWeather, OpenAI MPP (`/openai`), Google Maps, Aviationstack, KicksDB, TIP‑20 factory, OpenAI explainer. |
 
-You can treat DanceTempo as a **reference implementation**: product teams pick a use case, wire their own keys/env, and ship.
-
 ---
 
 ## Tech stack
@@ -23,6 +23,7 @@ You can treat DanceTempo as a **reference implementation**: product teams pick a
 - **Payments:** `mppx` (client + server), **viem** + **Tempo** chain actions (`viem/tempo`, `viem/chains`)  
 - **Backend:** Node.js, Express 5  
 - **Docs in repo:** [`DANCETECH_USE_CASES.md`](./DANCETECH_USE_CASES.md) — flows, endpoints, testing notes  
+- **Agent / tribal knowledge:** [`CLAWHUB.md`](./CLAWHUB.md) — successes, failures, debugging checklists  
 
 ### Local dev (Vite + API)
 
@@ -68,7 +69,7 @@ The **[Machine Payments Protocol service catalog](https://mpp.dev/services)** li
 | `/battle` | Battle entry + auto payout (live testnet/mainnet) |
 | `/coaching` | Coaching minutes marketplace (live payments) |
 | `/beats` | Beat API licensing (live payments) |
-| `/dance-extras` | Seven core hub flows (judge, cypher, clips, reputation, studio AI, bot, fan pass); **simulate** mock APIs or **Live Tempo MPP** via `POST /api/dance-extras/live/:flowKey/:network` |
+| `/dance-extras` | Seven core DanceTech flows (judge, cypher, clips, reputation, studio AI, bot, fan pass); **simulate** mock APIs or **Live Tempo MPP** via `POST /api/dance-extras/live/:flowKey/:network` |
 | `/card` | Virtual debit card (Laso / MPP + demo fallback) |
 | `/travel` | StableTravel, Aviationstack, Google Maps |
 | `/email` | AgentMail ops (wallet-paid relay + send) |
@@ -155,6 +156,7 @@ See `.env.example` for the full list and placeholders.
 ├── server/        # Express API (index.js, payments.js)
 ├── public/        # Static assets
 ├── DANCETECH_USE_CASES.md
+├── CLAWHUB.md     # Learning notes, failures, debugging playbooks
 ├── LOVABLE_HANDOFF.md
 └── vite.config.ts # dev proxy: /api → http://localhost:8787
 ```
@@ -183,4 +185,4 @@ This project is licensed under the MIT License. See [`LICENSE`](./LICENSE).
 
 ---
 
-**DanceTempo** — *Tempo + MPP for DanceTech, one super app.*
+**DanceTech Protocol** · **DanceTempo** — *Tempo + MPP for dance: one reference stack.*

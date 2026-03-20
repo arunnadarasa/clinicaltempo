@@ -1,8 +1,8 @@
-# ClawHub Learning Notes (DanceTempo)
+# ClawHub Learning Notes (DanceTempo / DanceTech Protocol)
 
 This is a “tribal knowledge” file for quickly onboarding OpenClaw (and any future agent) to the DanceTempo repository:
 
-- what the repo is (Tempo + MPP superapp),
+- what the repo is (**DanceTech Protocol** reference stack on Tempo + MPP),
 - what succeeded,
 - what failed and why,
 - and the repeatable best practices that prevent re-learning the hard parts.
@@ -11,7 +11,9 @@ This is a “tribal knowledge” file for quickly onboarding OpenClaw (and any f
 
 ## What this repo is
 
-DanceTempo is a super app for the DanceTech industry built around:
+**DanceTech Protocol** (this repo’s framing) is the set of **interoperable payment + ops patterns** for the dance industry—battle entry, coaching, licensing, judging, sponsorship, reputation, AI metering, ops automation, fan membership—implemented with **Tempo** settlement and **MPP / x402** machine payments. DanceTempo is the **reference superapp** that encodes those patterns in code.
+
+DanceTempo is built around:
 
 - **Tempo** (on-chain payments and receipts)
 - **MPP** via `mppx` (client/server-side handling of `402 Payment Required` challenges)
@@ -45,7 +47,15 @@ Core docs to reuse:
      - then the backend sends the email via **AgentMail’s API key endpoint** (`AGENTMAIL_API_KEY`).
    - This preserves “wallet-paid UX” while avoiding fragile inbox scope behavior in passthrough mode.
 
-4. **Server integration patterns are consistent**
+4. **`/dance-extras` live MPP + shared server handler**
+   - `POST /api/dance-extras/live/:flowKey/:network` runs `mppx.tempo.charge` then `executeDanceExtraFlow` so the seven core DanceTech scaffolds share one payment path.
+   - `GET /api/dance-extras/live` returns `flowKeys` — use it to verify the running Node process actually has the route (see failure §5).
+
+5. **AgentMail bot flow: always send `inbox_id`**
+   - `/api/ops/agentmail/send` requires `inbox_id` (or `AGENTMAIL_INBOX_ID` on the server).
+   - Demo default in the client: `streetkode@agentmail.to` via `src/agentmailDemo.ts` (`AGENTMAIL_DEMO_INBOX_ID`).
+
+6. **Server integration patterns are consistent**
    - For `402`-capable third-party endpoints:
      - if upstream returns `402`, the backend should pass that challenge back to the client (so `mppx` can solve).
    - For “paid endpoints then poll” integrations:
@@ -109,7 +119,31 @@ Core docs to reuse:
 - Ensure the backend returns the upstream `402` response directly (not a generic error).
 - Ensure “forwarding” of headers follows the solved payment stage (e.g. `payment`, `payment-receipt`).
 
-### 5) Invalid payment parameters (e.g. `feeToken`, network, or amount format)
+### 5) `Cannot POST /api/dance-extras/live/...` (HTML 404)
+
+**Symptom**
+- Telemetry shows `Cannot POST /api/dance-extras/live/<flow>/<network>` (Express default 404 HTML).
+
+**Cause**
+- Vite proxies `/api` to `http://localhost:8787`, but the **Express process on 8787 is an old build** (started before the live route existed) or isn’t this repo’s `server/index.js`.
+
+**Fix**
+- Restart the API: stop the old `node` process, run `npm run server` or `npm run dev:full`.
+- Verify: `GET http://localhost:8787/api/dance-extras/live` must return JSON with `flowKeys`. If that 404s, you’re still on the wrong/stale server.
+
+### 6) AgentMail: `Missing inbox_id for AgentMail send`
+
+**Symptom**
+- `400` with `Missing inbox_id for AgentMail send` after bot-action + mail step.
+
+**Cause**
+- Request body omitted `inbox_id` and `AGENTMAIL_INBOX_ID` is unset on the server.
+
+**Fix**
+- Pass `inbox_id` in the JSON body (demo: `streetkode@agentmail.to`) and/or set `AGENTMAIL_INBOX_ID` in `.env`.
+- For Bearer sends, still need `AGENTMAIL_API_KEY`.
+
+### 7) Invalid payment parameters (e.g. `feeToken`, network, or amount format)
 
 **Symptom**
 - Payment failures that mention token/fee/address/chain inconsistencies.
@@ -125,6 +159,17 @@ Core docs to reuse:
   - `tempoModerato` chain for testnet-like flows
   - `tempo` chain for mainnet-like flows
 - Use decimal-string amounts (server uses `toFixed(2)` in key payment handlers).
+
+### 8) `/dance-extras/foo` loaded the hub instead of ExtraDanceApp
+
+**Symptom**
+- Visiting `/dance-extras/live` showed the main hub “Extra Use Case” panel.
+
+**Cause**
+- Router in `main.tsx` only matched pathname `=== '/dance-extras'`.
+
+**Fix**
+- Match `pathname === '/dance-extras' || pathname.startsWith('/dance-extras/')` so subpaths render `ExtraDanceApp`.
 
 ---
 
@@ -179,4 +224,6 @@ Core docs to reuse:
 3. Implementation patterns and provider edge cases:
    - `server/index.js` (integration handlers, `402` passthrough, AgentMail send/inbox create)
 4. Dev proxy: `vite.config.ts` (proxy `/api` -> `http://localhost:8787`)
+5. Dance-extras live MPP: `POST /api/dance-extras/live/:flowKey/:network`, verify with `GET /api/dance-extras/live`
+6. Demo AgentMail inbox constant: `src/agentmailDemo.ts`
 
