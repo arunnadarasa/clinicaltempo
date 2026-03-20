@@ -150,7 +150,7 @@ See `.env.example` for the full list and placeholders.
 
 ## License
 
-Add a `LICENSE` file if you want to open-source formally; until then, default copyright applies to your organization.
+This project is licensed under the MIT License. See [`LICENSE`](./LICENSE).
 
 ---
 
