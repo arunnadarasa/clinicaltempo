@@ -35,6 +35,49 @@ export default function TempoWalletApp() {
         </p>
       </header>
 
+      <section
+        className="card"
+        style={{ borderLeft: '4px solid #22c55e', background: 'linear-gradient(90deg, #f0fdf4 0%, #fff 12%)' }}
+      >
+        <h2 style={{ marginTop: 0 }}>Does it work? (verified)</h2>
+        <p>
+          With <code>npm run server</code> on port <strong>8787</strong>, the DanceTempo live route returns{' '}
+          <strong>402 Payment Required</strong> — same as the browser. A quick check:
+        </p>
+        <pre
+          style={{
+            background: '#18181b',
+            color: '#e4e4e7',
+            padding: '1rem',
+            borderRadius: 8,
+            overflow: 'auto',
+            fontSize: '0.78rem',
+            lineHeight: 1.45,
+          }}
+        >
+          <code>
+            {`curl -s -w "\\nHTTP:%{http_code}\\n" -X POST \\
+  "http://127.0.0.1:8787/api/dance-extras/live/judge-score/testnet" \\
+  -H "Content-Type: application/json" \\
+  -d '{"network":"testnet","battleId":"battle_demo","roundId":"round_1","judgeId":"judge_1","dancerId":"dancer_1","score":8.7}'`}
+          </code>
+        </pre>
+        <p>
+          <strong>Expected:</strong> <code>HTTP:402</code> and JSON with <code>Payment Required</code>.
+        </p>
+        <p>
+          The official <code>tempo request --dry-run</code> against that URL <strong>before</strong>{' '}
+          <code>tempo wallet login</code> returns:{' '}
+          <code>No key configured for network &apos;tempo-moderato&apos;</code> — meaning the CLI is targeting{' '}
+          <strong>Tempo testnet</strong> correctly; you only need passkey login + testnet funds to complete the dry-run
+          / payment. Full log:{' '}
+          <a href="https://github.com/arunnadarasa/dancetempo/blob/main/docs/TEMPO_WALLET_TEST.md">
+            docs/TEMPO_WALLET_TEST.md
+          </a>
+          .
+        </p>
+      </section>
+
       <section className="card">
         <h2 style={{ marginTop: 0 }}>Why show this in DanceTempo?</h2>
         <p>
