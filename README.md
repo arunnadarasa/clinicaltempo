@@ -38,7 +38,7 @@ DanceTech Protocol is **one** stack (Tempo settlement + MPP/x402 authorization).
 - **Docs in repo:** [`DANCETECH_USE_CASES.md`](./DANCETECH_USE_CASES.md) — flows, endpoints, testing notes  
 - **Landing / Lovable handoff:** [`DANCE_TECH_PROTOCOL_AZ.md`](./DANCE_TECH_PROTOCOL_AZ.md) — A–Z narrative + GitHub links for marketing sites  
 - **Stripe `purl` CLI:** [`docs/PURL_DANCETEMPO.md`](./docs/PURL_DANCETEMPO.md) — smoke test `purl --dry-run` against live MPP routes  
-- **Tempo Wallet CLI (official):** [`/tempo-wallet`](http://localhost:5173/tempo-wallet) in the dev app — links + copy-paste for [`tempoxyz/wallet`](https://github.com/tempoxyz/wallet)  
+- **Tempo Wallet CLI (official):** route **`/tempo-wallet`** — in-app showcase + copy-paste for [`tempoxyz/wallet`](https://github.com/tempoxyz/wallet)  
 - **Agent / tribal knowledge:** [`CLAWHUB.md`](./CLAWHUB.md) — successes, failures, debugging checklists  
 
 ### Local dev (Vite + API)
