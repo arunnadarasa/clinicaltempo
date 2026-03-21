@@ -22,6 +22,7 @@ import {
   createVirtualDebitCard,
   verifyBattleEntryPayment,
 } from './payments.js'
+import { buildOpenApiDocument, DANCE_EXTRA_LIVE_AMOUNTS } from './openapi.mjs'
 
 const app = express()
 const port = Number(process.env.PORT || 8787)
@@ -161,16 +162,7 @@ function normalizeTempoNetworkFromBody(body) {
   return { network: 'mainnet', chainId: 4217 }
 }
 
-/** Per-flow Tempo MPP charge (decimal string) for `/api/dance-extras/live/...` */
-const DANCE_EXTRA_LIVE_AMOUNTS = {
-  'judge-score': '0.01',
-  'cypher-micropot': '0.02',
-  'clip-sale': '0.05',
-  reputation: '0.01',
-  'ai-usage': '0.02',
-  'bot-action': '0.03',
-  'fan-pass': '0.04',
-}
+/** Per-flow Tempo MPP charge — imported from openapi.mjs (single source for /openapi.json). */
 
 /**
  * Shared scaffold logic for the seven hub “extra” DanceTech flows (also used by live MPP route).
@@ -401,6 +393,11 @@ function executeDanceExtraFlow(flowKey, body) {
       return { ok: false, status: 400, error: 'Unknown dance extra flow.' }
   }
 }
+
+/** MPPScan / AgentCash discovery — OpenAPI 3.1 at canonical path. @see https://www.mppscan.com/discovery */
+app.get('/openapi.json', (req, res) => {
+  res.type('application/json').send(JSON.stringify(buildOpenApiDocument(req)))
+})
 
 app.get('/api/health', (_req, res) => {
   res.json({ ok: true, service: 'ai-proxy' })
@@ -3401,5 +3398,6 @@ app.post('/api/ai/explain-flow', async (req, res) => {
 
 app.listen(port, () => {
   console.log(`API server listening on http://localhost:${port}`)
+  console.log(`  OpenAPI (MPPScan discovery): GET /openapi.json`)
   console.log(`  Dance extras (live MPP): POST /api/dance-extras/live/:flowKey/:network  (GET /api/dance-extras/live to verify)`)
 })

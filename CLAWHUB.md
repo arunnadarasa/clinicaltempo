@@ -2,7 +2,7 @@
 
 ## LLM context bundle (`llm-full.txt`)
 
-For **full-repo orientation** in one paste (ChatGPT, Claude, Cursor, OpenClaw): use **`public/llm-full.txt`**, built from README + this file + `DANCETECH_USE_CASES.md` + `DANCE_TECH_PROTOCOL_AZ.md` + purl/tempo wallet + **`docs/EVVM_TEMPO.md`**.
+For **full-repo orientation** in one paste (ChatGPT, Claude, Cursor, OpenClaw): use **`public/llm-full.txt`**, built from README + this file + `DANCETECH_USE_CASES.md` + `DANCE_TECH_PROTOCOL_AZ.md` + purl/tempo wallet + **`docs/EVVM_TEMPO.md`** + **`docs/MPPSCAN_DISCOVERY.md`**.
 
 - **Regenerate:** `npm run build:llm` (runs automatically before `npm run build`).
 - **In the browser:** open **`/llm-full.txt`** or use the hub **“Download LLM context bundle”** button on `/`.
@@ -71,7 +71,11 @@ Core docs to reuse:
    - `/api/ops/agentmail/send` requires `inbox_id` (or `AGENTMAIL_INBOX_ID` on the server).
    - Demo default in the client: `streetkode@agentmail.to` via `src/agentmailDemo.ts` (`AGENTMAIL_DEMO_INBOX_ID`).
 
-7. **Server integration patterns are consistent**
+7. **MPPScan discovery (`GET /openapi.json`)**
+   - Express serves **OpenAPI 3.1** at **`/openapi.json`** (`server/openapi.mjs`) so agents can discover MPP-paid routes; **`DANCE_EXTRA_LIVE_AMOUNTS`** lives in **`openapi.mjs`** and is imported by **`server/index.js`** (single source of truth).
+   - Validate with **`npm run discovery`** while **`npm run server`** is running on **8787**. See **`docs/MPPSCAN_DISCOVERY.md`** and [mppscan.com/discovery](https://www.mppscan.com/discovery).
+
+8. **Server integration patterns are consistent**
    - For `402`-capable third-party endpoints:
      - if upstream returns `402`, the backend should pass that challenge back to the client (so `mppx` can solve).
    - For “paid endpoints then poll” integrations:

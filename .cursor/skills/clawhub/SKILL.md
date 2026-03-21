@@ -6,7 +6,8 @@ description: >-
   Tempo testnet. Use when: (1) Onboarding an agent or pasting system context, (2) Debugging 402/MPP,
   stale API, or port 8787 issues, (3) Editing docs that feed llm-full.txt, (4) Working on hub routes,
   server/index.js, or integrations (AgentMail, purl, OpenAI MPP, etc.), (5) EVVM deploy/docs,
-  (6) Preparing a ClawHub or Copilot instruction bundle. For raw EVVM protocol depth, fetch
+  (6) Preparing a ClawHub or Copilot instruction bundle, (7) MPPScan/OpenAPI discovery at
+  GET /openapi.json. For raw EVVM protocol depth, fetch
   https://www.evvm.info/llms-full.txt (not vendored in-repo).
 metadata: {}
 ---
@@ -28,6 +29,7 @@ metadata: {}
 | **Which screens exist** | **`src/hubRoutes.ts`**; hub **`/`**. |
 | **Changed markdown** included in bundle | **`npm run build:llm`** (runs before **`npm run build`**). |
 | **EVVM** (deploy, CLI, Tempo testnet) | **`docs/EVVM_TEMPO.md`**, **`/evvm`**; deep: **`https://www.evvm.info/llms-full.txt`**. |
+| **MPPScan / OpenAPI** | **`GET /openapi.json`**; **`npm run discovery`** · **`docs/MPPSCAN_DISCOVERY.md`** |
 | **Promotion** of a fix for future agents | Short entry under **Successes** or **Failures** in **`CLAWHUB.md`** (no secrets). |
 
 ---
@@ -80,6 +82,7 @@ dancetempo/
 ├── README.md                    # Routes, stack, quick start
 ├── DANCETECH_USE_CASES.md       # Flow-by-flow API contract
 ├── server/index.js              # Express routes, integrations, MPP proxies
+├── server/openapi.mjs           # OpenAPI 3.1 for GET /openapi.json (MPPScan)
 ├── server/payments.js           # Chain IDs, charge helpers
 ├── src/hubRoutes.ts             # Hub directory of all /routes
 ├── src/danceExtrasLiveMpp.ts    # Browser MPP helpers (live flows)

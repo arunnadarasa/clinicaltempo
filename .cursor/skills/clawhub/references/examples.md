@@ -8,6 +8,13 @@
 @server/index.js
 ```
 
+## OpenAPI / MPPScan (server must run)
+
+```bash
+curl -sS http://127.0.0.1:8787/openapi.json | head -c 400
+npm run discovery
+```
+
 ## Smoke: live MPP routes (server must run)
 
 ```bash

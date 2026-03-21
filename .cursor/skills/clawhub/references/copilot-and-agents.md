@@ -10,6 +10,12 @@ Use in **GitHub Copilot** instructions, **Claude** project knowledge, or **Codex
 
 ---
 
+## MPPScan add-on
+
+> Agent discovery: **`GET /openapi.json`** on the API origin. Validate: **`npm run discovery`** (with **`npm run server`**). See **`docs/MPPSCAN_DISCOVERY.md`** · [mppscan.com/discovery](https://www.mppscan.com/discovery).
+
+---
+
 ## EVVM add-on
 
 > For EVVM protocol depth beyond `docs/EVVM_TEMPO.md`, attach **`https://www.evvm.info/llms-full.txt`**. DanceTempo’s own file is **`llm-full.txt`** (singular), not EVVM’s **`llms-full.txt`**.

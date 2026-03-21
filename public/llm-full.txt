@@ -2,7 +2,7 @@
 
 **Purpose:** Single file to paste into an LLM system prompt, upload to a coding agent, or feed RAG — **full orientation** to this repository.
 
-**Generated:** 2026-03-21T10:21:50.138Z (re-run `npm run build:llm` after doc edits)
+**Generated:** 2026-03-21T10:56:19.199Z (re-run `npm run build:llm` after doc edits)
 
 **Download (running app):** `/llm-full.txt` from the dev server or production site.
 
@@ -69,6 +69,7 @@ DanceTech Protocol is **one** stack (Tempo settlement + MPP/x402 authorization).
 - **EVVM:** optional **`npm run evvm:vendor`** (full upstream clone + `./evvm install`); Solidity library: **`npm install @evvm/testnet-contracts`** when you need imports; route **`/evvm`** — deploy on **Tempo testnet only**; long-form [`docs/EVVM_TEMPO.md`](./docs/EVVM_TEMPO.md) (skip global registry until EVVM lists Tempo)  
 - **Tempo Wallet CLI (official):** route **`/tempo-wallet`** — in-app showcase + copy-paste for [`tempoxyz/wallet`](https://github.com/tempoxyz/wallet); verification log [`docs/TEMPO_WALLET_TEST.md`](./docs/TEMPO_WALLET_TEST.md)  
 - **Agent / tribal knowledge:** [`CLAWHUB.md`](./CLAWHUB.md) — successes, failures, debugging checklists  
+- **MPPScan / AgentCash discovery:** **`GET /openapi.json`** — OpenAPI 3.1 for agents; validate with **`npm run discovery`** (requires **`npm run server`**). Long-form [`docs/MPPSCAN_DISCOVERY.md`](./docs/MPPSCAN_DISCOVERY.md)  
 - **LLM context bundle (single file):** [`public/llm-full.txt`](./public/llm-full.txt) — concatenated README + use cases + ClawHub + protocol docs; **regenerate** with `npm run build:llm`. **Download** from the running app at **`/llm-full.txt`** (hub button: “Download LLM context bundle”) or from GitHub raw after push.
 - **GitHub Copilot:** [`.github/copilot-instructions.md`](./.github/copilot-instructions.md) — short project hints (same idea as the [ClawHub skill](https://clawhub.ai/)’s Copilot section). **Cursor / ClawHub skill:** [`.cursor/skills/clawhub/`](./.cursor/skills/clawhub/) — `SKILL.md`, **`references/`**, **`assets/`**, **`hooks/openclaw/`** (OpenClaw bootstrap hook **`dancetempo-clawhub`**), **`scripts/verify-dancetempo-context.sh`**, package **[`README.md`](./.cursor/skills/clawhub/README.md)** (zip the folder for ClawHub upload; modeled on [self-improving-agent](https://clawhub.ai/pskoett/self-improving-agent)).
 
@@ -203,11 +204,12 @@ See `.env.example` for the full list and placeholders.
 
 | Resource | Purpose |
 |----------|---------|
-| [`public/llm-full.txt`](./public/llm-full.txt) | Single-file bundle (README + use cases + ClawHub + protocol + purl/wallet/EVVM docs). **Regenerate:** `npm run build:llm` |
+| [`public/llm-full.txt`](./public/llm-full.txt) | Single-file bundle (README + use cases + ClawHub + protocol + purl/wallet/EVVM/MPPScan docs). **Regenerate:** `npm run build:llm` |
 | [`CLAWHUB.md`](./CLAWHUB.md) | Tribal debugging — what worked / failed |
 | [`.github/copilot-instructions.md`](./.github/copilot-instructions.md) | Hints for GitHub Copilot |
 | [`.cursor/skills/clawhub/`](./.cursor/skills/clawhub/README.md) | **Cursor / [ClawHub](https://clawhub.ai/)** skill: `SKILL.md`, `references/`, `assets/`, optional OpenClaw hook `hooks/openclaw/`, `scripts/verify-dancetempo-context.sh` — zip this folder to publish the skill |
 | EVVM upstream | [`https://www.evvm.info/llms-full.txt`](https://www.evvm.info/llms-full.txt) (not vendored; attach when doing deep EVVM work) |
+| **MPPScan discovery** | **`GET /openapi.json`** on the API (OpenAPI 3.1 + `x-payment-info` for live MPP routes). Validate: **`npm run discovery`** (server on **8787**). Guide: [`docs/MPPSCAN_DISCOVERY.md`](./docs/MPPSCAN_DISCOVERY.md) · [mppscan.com/discovery](https://www.mppscan.com/discovery) |
 
 ---
 
@@ -218,7 +220,7 @@ See `.env.example` for the full list and placeholders.
 ├── server/           # Express API (index.js, payments.js)
 ├── public/           # Static assets; llm-full.txt generated here
 ├── scripts/          # build-llm-full.mjs, install-evvm.mjs
-├── docs/             # PURL_DANCETEMPO.md, TEMPO_WALLET_TEST.md, EVVM_TEMPO.md
+├── docs/             # PURL, wallet test, EVVM_TEMPO, MPPSCAN_DISCOVERY, …
 ├── .cursor/skills/clawhub/  # ClawHub / Cursor skill (hooks, references, assets)
 ├── .github/          # copilot-instructions.md
 ├── DANCETECH_USE_CASES.md
@@ -265,7 +267,7 @@ This project is licensed under the MIT License. See [`LICENSE`](./LICENSE).
 
 ## LLM context bundle (`llm-full.txt`)
 
-For **full-repo orientation** in one paste (ChatGPT, Claude, Cursor, OpenClaw): use **`public/llm-full.txt`**, built from README + this file + `DANCETECH_USE_CASES.md` + `DANCE_TECH_PROTOCOL_AZ.md` + purl/tempo wallet + **`docs/EVVM_TEMPO.md`**.
+For **full-repo orientation** in one paste (ChatGPT, Claude, Cursor, OpenClaw): use **`public/llm-full.txt`**, built from README + this file + `DANCETECH_USE_CASES.md` + `DANCE_TECH_PROTOCOL_AZ.md` + purl/tempo wallet + **`docs/EVVM_TEMPO.md`** + **`docs/MPPSCAN_DISCOVERY.md`**.
 
 - **Regenerate:** `npm run build:llm` (runs automatically before `npm run build`).
 - **In the browser:** open **`/llm-full.txt`** or use the hub **“Download LLM context bundle”** button on `/`.
@@ -334,7 +336,11 @@ Core docs to reuse:
    - `/api/ops/agentmail/send` requires `inbox_id` (or `AGENTMAIL_INBOX_ID` on the server).
    - Demo default in the client: `streetkode@agentmail.to` via `src/agentmailDemo.ts` (`AGENTMAIL_DEMO_INBOX_ID`).
 
-7. **Server integration patterns are consistent**
+7. **MPPScan discovery (`GET /openapi.json`)**
+   - Express serves **OpenAPI 3.1** at **`/openapi.json`** (`server/openapi.mjs`) so agents can discover MPP-paid routes; **`DANCE_EXTRA_LIVE_AMOUNTS`** lives in **`openapi.mjs`** and is imported by **`server/index.js`** (single source of truth).
+   - Validate with **`npm run discovery`** while **`npm run server`** is running on **8787**. See **`docs/MPPSCAN_DISCOVERY.md`** and [mppscan.com/discovery](https://www.mppscan.com/discovery).
+
+8. **Server integration patterns are consistent**
    - For `402`-capable third-party endpoints:
      - if upstream returns `402`, the backend should pass that challenge back to the client (so `mppx` can solve).
    - For “paid endpoints then poll” integrations:
@@ -1441,3 +1447,51 @@ Dedicated page: **`/evvm`** on the DanceTempo hub.
 
 
 ## <<< END FILE: docs/EVVM_TEMPO.md
+
+
+## >>> BEGIN FILE: docs/MPPSCAN_DISCOVERY.md
+
+# MPPScan discovery (`/openapi.json`)
+
+DanceTempo exposes **OpenAPI 3.1** at **`GET /openapi.json`** for **[MPPScan](https://www.mppscan.com/)** / AgentCash-style discovery.
+
+- **Spec:** [Discovery Spec | MPPScan](https://www.mppscan.com/discovery)
+- **Implementation:** `server/openapi.mjs` (builds the document) + `GET /openapi.json` in `server/index.js`
+- **Paid routes:** Documented with **`x-payment-info`** (MPP + x402), **`402`** responses, and JSON **`requestBody`** schemas where required
+
+## Local URLs
+
+| Context | OpenAPI URL |
+|--------|----------------|
+| Express only | `http://localhost:8787/openapi.json` |
+| Vite dev (proxied) | `http://localhost:5173/openapi.json` → 8787 |
+
+## Validate before registering
+
+```bash
+# Terminal 1
+npm run server
+
+# Terminal 2 (with server up)
+npm run discovery
+```
+
+Or manually:
+
+```bash
+npx -y @agentcash/discovery@latest discover "http://localhost:8787"
+```
+
+The **`discover`** command loads **`GET /openapi.json`** and lists routes + pricing. You may see **warnings** (e.g. `L2_AUTH_MODE_MISSING` on free routes, `WELLKNOWN_NOT_FOUND` if you have not added `/.well-known/x402`) — tighten the spec over time. Fix structural issues in `server/openapi.mjs` (and keep **`DANCE_EXTRA_LIVE_AMOUNTS`** in sync — it is the single source imported by `server/index.js`).
+
+## Registration
+
+After validation passes, register the **public origin** of your API (production or tunnel) on [MPPScan](https://www.mppscan.com/discovery). Add **`x-discovery.ownershipProofs`** as required by MPPScan when you have proofs.
+
+## Precedence (MPPScan)
+
+1. OpenAPI at `/openapi.json`
+2. Runtime **`402`** + **`WWW-Authenticate`** — must match the documented MPP behavior
+
+
+## <<< END FILE: docs/MPPSCAN_DISCOVERY.md

@@ -41,6 +41,7 @@ DanceTech Protocol is **one** stack (Tempo settlement + MPP/x402 authorization).
 - **EVVM:** optional **`npm run evvm:vendor`** (full upstream clone + `./evvm install`); Solidity library: **`npm install @evvm/testnet-contracts`** when you need imports; route **`/evvm`** — deploy on **Tempo testnet only**; long-form [`docs/EVVM_TEMPO.md`](./docs/EVVM_TEMPO.md) (skip global registry until EVVM lists Tempo)  
 - **Tempo Wallet CLI (official):** route **`/tempo-wallet`** — in-app showcase + copy-paste for [`tempoxyz/wallet`](https://github.com/tempoxyz/wallet); verification log [`docs/TEMPO_WALLET_TEST.md`](./docs/TEMPO_WALLET_TEST.md)  
 - **Agent / tribal knowledge:** [`CLAWHUB.md`](./CLAWHUB.md) — successes, failures, debugging checklists  
+- **MPPScan / AgentCash discovery:** **`GET /openapi.json`** — OpenAPI 3.1 for agents; validate with **`npm run discovery`** (requires **`npm run server`**). Long-form [`docs/MPPSCAN_DISCOVERY.md`](./docs/MPPSCAN_DISCOVERY.md)  
 - **LLM context bundle (single file):** [`public/llm-full.txt`](./public/llm-full.txt) — concatenated README + use cases + ClawHub + protocol docs; **regenerate** with `npm run build:llm`. **Download** from the running app at **`/llm-full.txt`** (hub button: “Download LLM context bundle”) or from GitHub raw after push.
 - **GitHub Copilot:** [`.github/copilot-instructions.md`](./.github/copilot-instructions.md) — short project hints (same idea as the [ClawHub skill](https://clawhub.ai/)’s Copilot section). **Cursor / ClawHub skill:** [`.cursor/skills/clawhub/`](./.cursor/skills/clawhub/) — `SKILL.md`, **`references/`**, **`assets/`**, **`hooks/openclaw/`** (OpenClaw bootstrap hook **`dancetempo-clawhub`**), **`scripts/verify-dancetempo-context.sh`**, package **[`README.md`](./.cursor/skills/clawhub/README.md)** (zip the folder for ClawHub upload; modeled on [self-improving-agent](https://clawhub.ai/pskoett/self-improving-agent)).
 
@@ -175,11 +176,12 @@ See `.env.example` for the full list and placeholders.
 
 | Resource | Purpose |
 |----------|---------|
-| [`public/llm-full.txt`](./public/llm-full.txt) | Single-file bundle (README + use cases + ClawHub + protocol + purl/wallet/EVVM docs). **Regenerate:** `npm run build:llm` |
+| [`public/llm-full.txt`](./public/llm-full.txt) | Single-file bundle (README + use cases + ClawHub + protocol + purl/wallet/EVVM/MPPScan docs). **Regenerate:** `npm run build:llm` |
 | [`CLAWHUB.md`](./CLAWHUB.md) | Tribal debugging — what worked / failed |
 | [`.github/copilot-instructions.md`](./.github/copilot-instructions.md) | Hints for GitHub Copilot |
 | [`.cursor/skills/clawhub/`](./.cursor/skills/clawhub/README.md) | **Cursor / [ClawHub](https://clawhub.ai/)** skill: `SKILL.md`, `references/`, `assets/`, optional OpenClaw hook `hooks/openclaw/`, `scripts/verify-dancetempo-context.sh` — zip this folder to publish the skill |
 | EVVM upstream | [`https://www.evvm.info/llms-full.txt`](https://www.evvm.info/llms-full.txt) (not vendored; attach when doing deep EVVM work) |
+| **MPPScan discovery** | **`GET /openapi.json`** on the API (OpenAPI 3.1 + `x-payment-info` for live MPP routes). Validate: **`npm run discovery`** (server on **8787**). Guide: [`docs/MPPSCAN_DISCOVERY.md`](./docs/MPPSCAN_DISCOVERY.md) · [mppscan.com/discovery](https://www.mppscan.com/discovery) |
 
 ---
 
@@ -190,7 +192,7 @@ See `.env.example` for the full list and placeholders.
 ├── server/           # Express API (index.js, payments.js)
 ├── public/           # Static assets; llm-full.txt generated here
 ├── scripts/          # build-llm-full.mjs, install-evvm.mjs
-├── docs/             # PURL_DANCETEMPO.md, TEMPO_WALLET_TEST.md, EVVM_TEMPO.md
+├── docs/             # PURL, wallet test, EVVM_TEMPO, MPPSCAN_DISCOVERY, …
 ├── .cursor/skills/clawhub/  # ClawHub / Cursor skill (hooks, references, assets)
 ├── .github/          # copilot-instructions.md
 ├── DANCETECH_USE_CASES.md

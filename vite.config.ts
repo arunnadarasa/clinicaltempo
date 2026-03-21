@@ -18,6 +18,11 @@ export default defineConfig({
         target: 'http://localhost:8787',
         changeOrigin: true,
       },
+      // MPPScan discovery — same origin as Vite dev when API runs on 8787
+      '/openapi.json': {
+        target: 'http://localhost:8787',
+        changeOrigin: true,
+      },
     },
   },
 })

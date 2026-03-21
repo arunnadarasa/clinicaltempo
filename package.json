@@ -10,6 +10,7 @@
     "dev:full": "concurrently \"npm run server\" \"npm run dev\"",
     "build:llm": "node scripts/build-llm-full.mjs",
     "evvm:vendor": "node scripts/install-evvm.mjs",
+    "discovery": "npx -y @agentcash/discovery@latest discover \"http://localhost:8787\"",
     "build": "npm run build:llm && tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview"

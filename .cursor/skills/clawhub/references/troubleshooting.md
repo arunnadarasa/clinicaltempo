@@ -27,6 +27,11 @@ Cross-check with **`CLAWHUB.md`** for project-specific history.
 - **Symptom:** **`public/llm-full.txt`** missing recent README changes.
 - **Fix:** Run **`npm run build:llm`** after editing any source file in **`scripts/build-llm-full.mjs`**.
 
+## MPPScan / `npm run discovery` fails or shows warnings
+
+- **Cause:** API not running, wrong port, or **`server/openapi.mjs`** drift vs **`server/index.js`** routes.
+- **Fix:** Start **`npm run server`** (**8787**). Confirm **`GET /openapi.json`** returns JSON. **`DANCE_EXTRA_LIVE_AMOUNTS`** must be edited only in **`server/openapi.mjs`** (imported by **`server/index.js`**). See **`docs/MPPSCAN_DISCOVERY.md`**. If port **8787** is already taken by a stale process, use another **`PORT`** or kill the old **`node`**.
+
 ## EVVM deploy: chain unsupported
 
 - **Symptom:** EVVM CLI rejects **Tempo testnet (42431)**.

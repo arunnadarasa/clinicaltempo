@@ -10,6 +10,8 @@ const REMINDER_CONTENT = `
 
 **Tribal debugging:** \`CLAWHUB.md\` (successes, failures, MPP, port **8787**, purl, AgentMail).
 
+**MPPScan discovery:** \`GET /openapi.json\` — validate: \`npm run discovery\` (server on 8787).
+
 **API smoke (Express on 8787):** \`GET /api/dance-extras/live\` → JSON with \`flowKeys\`. If HTML/404 → wrong server or stale \`node\` process.
 
 **Hub routes:** \`src/hubRoutes.ts\` · **Server:** \`server/index.js\`
