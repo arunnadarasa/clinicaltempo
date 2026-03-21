@@ -4,6 +4,8 @@
 
 For **full-repo orientation** in one paste (ChatGPT, Claude, Cursor, OpenClaw): use **`public/llm-full.txt`**, built from README + this file + `DANCETECH_USE_CASES.md` + `DANCE_TECH_PROTOCOL_AZ.md` + purl/tempo wallet + **`docs/EVVM_TEMPO.md`** + **`docs/MPPSCAN_DISCOVERY.md`**.
 
+**Published skill (ClawHub):** [clawhub.ai/arunnadarasa/dancetempo](https://clawhub.ai/arunnadarasa/dancetempo) — install the DanceTempo skill for IDE/OpenClaw; source of truth remains **`.cursor/skills/clawhub/`** in git.
+
 - **Regenerate:** `npm run build:llm` (runs automatically before `npm run build`).
 - **In the browser:** open **`/llm-full.txt`** or use the hub **“Download LLM context bundle”** button on `/`.
 - **In GitHub:** Raw URL is `https://raw.githubusercontent.com/arunnadarasa/dancetempo/main/public/llm-full.txt`.

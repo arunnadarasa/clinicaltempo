@@ -2,6 +2,8 @@
 
 Use in **GitHub Copilot** instructions, **Claude** project knowledge, or **Codex** project docs.
 
+**Published skill:** [clawhub.ai/arunnadarasa/dancetempo](https://clawhub.ai/arunnadarasa/dancetempo)
+
 ---
 
 ## One-liner (system-style)

@@ -2,6 +2,8 @@
 
 This folder is the **authoritative** copy of the **ClawHub + DanceTempo** agent skill. It is versioned inside the [DanceTempo](https://github.com/arunnadarasa/dancetempo) repository under `.cursor/skills/clawhub/`.
 
+**Published listing:** [clawhub.ai/arunnadarasa/dancetempo](https://clawhub.ai/arunnadarasa/dancetempo) — upload a fresh zip here when you change the skill.
+
 ## Purpose
 
 - Point agents at **`public/llm-full.txt`** (full repo bundle) and **`CLAWHUB.md`** (tribal debugging).

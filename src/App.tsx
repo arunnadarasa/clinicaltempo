@@ -764,16 +764,27 @@ function App() {
         <h1>Krump DanceTech Demo</h1>
         <p>Foundational interface across all 10 DanceTech Finance use cases.</p>
         <p className="hub-llm-pill">
-          <a
-            className="hub-llm-download"
-            href="/llm-full.txt"
-            download="dancetempo-llm-full.txt"
-          >
-            Download LLM context bundle
-          </a>
+          <span className="hub-llm-actions">
+            <a
+              className="hub-llm-download"
+              href="/llm-full.txt"
+              download="dancetempo-llm-full.txt"
+            >
+              Download LLM context bundle
+            </a>
+            <a
+              className="hub-llm-clawhub"
+              href="https://clawhub.ai/arunnadarasa/dancetempo"
+              target="_blank"
+              rel="noreferrer"
+            >
+              ClawHub skill →
+            </a>
+          </span>
           <span className="hub-llm-download-hint">
-            — Full README + use cases + ClawHub + protocol docs as one file (<code>llm-full.txt</code>). Regenerate with{' '}
-            <code>npm run build:llm</code>.
+            <strong>LLM bundle:</strong> full README + use cases + ClawHub + protocol docs in one file (<code>llm-full.txt</code>).
+            Regenerate with <code>npm run build:llm</code>.{' '}
+            <strong>ClawHub:</strong> install the published DanceTempo skill for Cursor / OpenClaw — same context pointers + optional hooks.
           </span>
         </p>
 

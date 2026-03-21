@@ -223,5 +223,6 @@ Full notes: **`references/openclaw-dancetempo.md`**.
 
 ## See also
 
+- **Published skill:** [clawhub.ai/arunnadarasa/dancetempo](https://clawhub.ai/arunnadarasa/dancetempo)
 - Upstream inspiration: [self-improving-agent](https://clawhub.ai/pskoett/self-improving-agent) (structure: references, assets, scripts, **hooks**).
 - DanceTempo repo: **`README.md`**, **`CLAWHUB.md`**.

@@ -15,7 +15,7 @@ DanceTech Protocol is **one** stack (Tempo settlement + MPP/x402 authorization).
 | **Agent → human** | Automated action delivers something to a person (email, alert, receipt, pass). | Ops bot + AgentMail, notifications; fulfillment after payment—not a second payment “protocol.” |
 | **Agent → agent** | Service-to-service: backends, cron, or **machine payments** between APIs. | `402` + `mppx` on the server, **API keys** where allowed (e.g. AgentMail after MPP), webhooks, `POST /api/*` from trusted workers. |
 
-**Roles (mental model):** **Payer** (human wallet vs server treasury vs delegated agent), **beneficiary** (human vs org vs system), **channel** (browser vs server). Ambient agents (e.g. coding assistants) consume **skills** like [`CLAWHUB.md`](./CLAWHUB.md) and [`.cursor/skills/clawhub/`](./.cursor/skills/clawhub/README.md); runtime agents should call the **same** Express contracts with explicit trust boundaries.
+**Roles (mental model):** **Payer** (human wallet vs server treasury vs delegated agent), **beneficiary** (human vs org vs system), **channel** (browser vs server). Ambient agents (e.g. coding assistants) consume **skills** like [`CLAWHUB.md`](./CLAWHUB.md), the published **[ClawHub skill](https://clawhub.ai/arunnadarasa/dancetempo)**, and repo **[`.cursor/skills/clawhub/`](./.cursor/skills/clawhub/README.md)**; runtime agents should call the **same** Express contracts with explicit trust boundaries.
 
 ---
 
@@ -43,7 +43,7 @@ DanceTech Protocol is **one** stack (Tempo settlement + MPP/x402 authorization).
 - **Agent / tribal knowledge:** [`CLAWHUB.md`](./CLAWHUB.md) — successes, failures, debugging checklists  
 - **MPPScan / AgentCash discovery:** **`GET /openapi.json`** — OpenAPI 3.1 for agents; validate with **`npm run discovery`** (requires **`npm run server`**). Long-form [`docs/MPPSCAN_DISCOVERY.md`](./docs/MPPSCAN_DISCOVERY.md)  
 - **LLM context bundle (single file):** [`public/llm-full.txt`](./public/llm-full.txt) — concatenated README + use cases + ClawHub + protocol docs; **regenerate** with `npm run build:llm`. **Download** from the running app at **`/llm-full.txt`** (hub button: “Download LLM context bundle”) or from GitHub raw after push.
-- **GitHub Copilot:** [`.github/copilot-instructions.md`](./.github/copilot-instructions.md) — short project hints (same idea as the [ClawHub skill](https://clawhub.ai/)’s Copilot section). **Cursor / ClawHub skill:** [`.cursor/skills/clawhub/`](./.cursor/skills/clawhub/) — `SKILL.md`, **`references/`**, **`assets/`**, **`hooks/openclaw/`** (OpenClaw bootstrap hook **`dancetempo-clawhub`**), **`scripts/verify-dancetempo-context.sh`**, package **[`README.md`](./.cursor/skills/clawhub/README.md)** (zip the folder for ClawHub upload; modeled on [self-improving-agent](https://clawhub.ai/pskoett/self-improving-agent)).
+- **GitHub Copilot:** [`.github/copilot-instructions.md`](./.github/copilot-instructions.md) — short project hints. **Published ClawHub skill:** **[clawhub.ai/arunnadarasa/dancetempo](https://clawhub.ai/arunnadarasa/dancetempo)** — Cursor / OpenClaw; mirrors repo **`.cursor/skills/clawhub/`** (`SKILL.md`, `references/`, `assets/`, optional **`hooks/openclaw/`** hook **`dancetempo-clawhub`**, `scripts/verify-dancetempo-context.sh`). Zip that folder to update the listing; modeled on [self-improving-agent](https://clawhub.ai/pskoett/self-improving-agent).
 
 ### Local dev (Vite + API)
 
@@ -179,7 +179,7 @@ See `.env.example` for the full list and placeholders.
 | [`public/llm-full.txt`](./public/llm-full.txt) | Single-file bundle (README + use cases + ClawHub + protocol + purl/wallet/EVVM/MPPScan docs). **Regenerate:** `npm run build:llm` |
 | [`CLAWHUB.md`](./CLAWHUB.md) | Tribal debugging — what worked / failed |
 | [`.github/copilot-instructions.md`](./.github/copilot-instructions.md) | Hints for GitHub Copilot |
-| [`.cursor/skills/clawhub/`](./.cursor/skills/clawhub/README.md) | **Cursor / [ClawHub](https://clawhub.ai/)** skill: `SKILL.md`, `references/`, `assets/`, optional OpenClaw hook `hooks/openclaw/`, `scripts/verify-dancetempo-context.sh` — zip this folder to publish the skill |
+| **[ClawHub skill (published)](https://clawhub.ai/arunnadarasa/dancetempo)** | Same content as repo **`.cursor/skills/clawhub/`** — install from the site; zip the folder to publish updates |
 | EVVM upstream | [`https://www.evvm.info/llms-full.txt`](https://www.evvm.info/llms-full.txt) (not vendored; attach when doing deep EVVM work) |
 | **MPPScan discovery** | **`GET /openapi.json`** on the API (OpenAPI 3.1 + `x-payment-info` for live MPP routes). Validate: **`npm run discovery`** (server on **8787**). Guide: [`docs/MPPSCAN_DISCOVERY.md`](./docs/MPPSCAN_DISCOVERY.md) · [mppscan.com/discovery](https://www.mppscan.com/discovery) |
 

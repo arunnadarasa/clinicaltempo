@@ -9,6 +9,8 @@ import type { HookHandler } from 'openclaw/hooks';
 
 const REMINDER_CONTENT = `## DanceTempo context (ClawHub skill)
 
+**Published skill:** https://clawhub.ai/arunnadarasa/dancetempo
+
 **Full repo bundle:** \`public/llm-full.txt\` — regenerate: \`npm run build:llm\` (also runs before \`npm run build\`). Running app: **\`/llm-full.txt\`**.
 
 **Tribal debugging:** \`CLAWHUB.md\` (successes, failures, MPP, port **8787**, purl, AgentMail).
