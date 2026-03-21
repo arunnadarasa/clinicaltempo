@@ -37,9 +37,10 @@ DanceTech Protocol is **one** stack (Tempo settlement + MPP/x402 authorization).
 - **Backend:** Node.js, Express 5  
 - **Docs in repo:** [`DANCETECH_USE_CASES.md`](./DANCETECH_USE_CASES.md) — flows, endpoints, testing notes  
 - **Landing / Lovable handoff:** [`DANCE_TECH_PROTOCOL_AZ.md`](./DANCE_TECH_PROTOCOL_AZ.md) — A–Z narrative + GitHub links for marketing sites  
-- **Stripe `purl` CLI:** [`docs/PURL_DANCETEMPO.md`](./docs/PURL_DANCETEMPO.md) — smoke test `purl --dry-run` against live MPP routes  
+- **Stripe `purl` CLI:** route **`/purl`** — copy-paste `curl` + `purl` for **testnet + mainnet**; long-form [`docs/PURL_DANCETEMPO.md`](./docs/PURL_DANCETEMPO.md)  
 - **Tempo Wallet CLI (official):** route **`/tempo-wallet`** — in-app showcase + copy-paste for [`tempoxyz/wallet`](https://github.com/tempoxyz/wallet); verification log [`docs/TEMPO_WALLET_TEST.md`](./docs/TEMPO_WALLET_TEST.md)  
 - **Agent / tribal knowledge:** [`CLAWHUB.md`](./CLAWHUB.md) — successes, failures, debugging checklists  
+- **LLM context bundle (single file):** [`public/llm-full.txt`](./public/llm-full.txt) — concatenated README + use cases + ClawHub + protocol docs; **regenerate** with `npm run build:llm`. **Download** from the running app at **`/llm-full.txt`** (hub button: “Download LLM context bundle”) or from GitHub raw after push.
 
 ### Local dev (Vite + API)
 
@@ -98,6 +99,7 @@ The **[Machine Payments Protocol service catalog](https://mpp.dev/services)** li
 | `/kicks` | KicksDB (live MPP + simulate) |
 | `/tip20` | TIP‑20 token launch & post-launch ops |
 | `/tempo-wallet` | Showcase: [Tempo Wallet CLI](https://github.com/tempoxyz/wallet) (MPP + `tempo request`; pairs with `/dance-extras` live routes) |
+| `/purl` | Showcase: [Stripe purl](https://github.com/stripe/purl) — `curl` + `purl --dry-run` / live pay for **testnet + mainnet** live MPP URLs |
 
 ---
 

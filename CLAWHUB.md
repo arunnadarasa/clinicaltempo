@@ -1,5 +1,17 @@
 # ClawHub Learning Notes (DanceTempo / DanceTech Protocol)
 
+## LLM context bundle (`llm-full.txt`)
+
+For **full-repo orientation** in one paste (ChatGPT, Claude, Cursor, OpenClaw): use **`public/llm-full.txt`**, built from README + this file + `DANCETECH_USE_CASES.md` + `DANCE_TECH_PROTOCOL_AZ.md` + purl/tempo wallet docs.
+
+- **Regenerate:** `npm run build:llm` (runs automatically before `npm run build`).
+- **In the browser:** open **`/llm-full.txt`** or use the hub **“Download LLM context bundle”** button on `/`.
+- **In GitHub:** Raw URL is `https://raw.githubusercontent.com/<org>/<repo>/main/public/llm-full.txt` after you push.
+
+Keep **this file (`CLAWHUB.md`)** for debugging checklists and failures; pair it with `llm-full.txt` when an agent needs both product context and tribal knowledge.
+
+---
+
 This is a “tribal knowledge” file for quickly onboarding OpenClaw (and any future agent) to the DanceTempo repository:
 
 - what the repo is (**DanceTech Protocol** reference stack on Tempo + MPP),

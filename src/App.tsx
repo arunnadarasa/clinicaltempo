@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { AGENTMAIL_DEMO_INBOX_ID } from './agentmailDemo'
+import { HUB_ROUTE_GROUPS } from './hubRoutes'
 import './App.css'
 import {
   addTxHistory,
@@ -762,29 +763,42 @@ function App() {
       <header className="hero">
         <h1>Krump DanceTech Demo</h1>
         <p>Foundational interface across all 10 DanceTech Finance use cases.</p>
-        <div className="flow-switch">
-          {(['battle', 'coaching', 'beats'] as FlowKey[]).map((key) => (
-            <button
-              key={key}
-              className={!showExtraPanel && activeFlow === key ? 'active' : ''}
-              onClick={() => {
-                setShowExtraPanel(false)
-                resetFlow(key)
-              }}
-            >
-              {flowCopy[key].title}
-            </button>
-          ))}
-          <button className={showExtraPanel ? 'active' : ''} onClick={() => setShowExtraPanel(true)}>
-            Extra Use Case APIs
-          </button>
-          <a className="secondary" href="/dance-extras" style={{ padding: '0.5rem 0.75rem', borderRadius: 8 }}>
-            7 flows (testnet/mainnet page)
+        <p className="hub-llm-pill">
+          <a
+            className="hub-llm-download"
+            href="/llm-full.txt"
+            download="dancetempo-llm-full.txt"
+          >
+            Download LLM context bundle
           </a>
-          <a className="secondary" href="/tempo-wallet" style={{ padding: '0.5rem 0.75rem', borderRadius: 8 }}>
-            Tempo Wallet CLI
-          </a>
-        </div>
+          <span className="hub-llm-download-hint">
+            — Full README + use cases + ClawHub + protocol docs as one file (<code>llm-full.txt</code>). Regenerate with{' '}
+            <code>npm run build:llm</code>.
+          </span>
+        </p>
+
+        <nav className="hub-nav" aria-label="Hub flows">
+          <div className="hub-nav__primary">
+            <span className="hub-nav__primary-label">In this hub</span>
+            <div className="flow-switch hub-nav__flow-buttons">
+              {(['battle', 'coaching', 'beats'] as FlowKey[]).map((key) => (
+                <button
+                  key={key}
+                  className={!showExtraPanel && activeFlow === key ? 'active' : ''}
+                  onClick={() => {
+                    setShowExtraPanel(false)
+                    resetFlow(key)
+                  }}
+                >
+                  {flowCopy[key].title}
+                </button>
+              ))}
+              <button className={showExtraPanel ? 'active' : ''} onClick={() => setShowExtraPanel(true)}>
+                Extra Use Case APIs
+              </button>
+            </div>
+          </div>
+        </nav>
       </header>
 
       {showExtraPanel ? (
@@ -932,83 +946,6 @@ function App() {
       </section>
 
       <section className="card api">
-        <h3>Dedicated Battle Frontend</h3>
-        <p>
-          Open <code>/battle</code> for focused testnet/mainnet Battle Entry + Auto Payout
-          testing.
-        </p>
-        <p>
-          Open <code>/coaching</code> for a dedicated Coaching Minutes flow and <code>/beats</code>{' '}
-          for dedicated Beat API Licensing flow.
-        </p>
-        <p>
-          Open <code>/dance-extras</code> for the seven other core DanceTech scaffolds (judge, cypher, clips,
-          reputation, studio AI, bot, fan pass) with <strong>testnet/mainnet</strong> on each API call.
-        </p>
-        <p>
-          Open <code>/tempo-wallet</code> for the official{' '}
-          <a href="https://github.com/tempoxyz/wallet" target="_blank" rel="noreferrer">
-            Tempo Wallet CLI
-          </a>{' '}
-          (passkey login + <code>tempo request</code> for MPP) and copy-paste examples against this API.
-        </p>
-        <p>
-          Open <code>/card</code> for dedicated virtual debit card creation.
-        </p>
-        <p>
-          Open <code>/travel</code> for dedicated StableTravel, Aviationstack, and Google Maps ops testing.
-        </p>
-        <p>
-          Open <code>/email</code> for dedicated AgentMail notification testing.
-        </p>
-        <p>
-          Open <code>/ops</code> for a combined AgentMail + StablePhone operations console.
-        </p>
-        <p>
-          Open <code>/social</code> for StableSocial trigger + token polling tests.
-        </p>
-        <p>
-          Open <code>/music</code> for Suno music generation tests.
-        </p>
-        <p>
-          Open <code>/parallel</code> for Parallel web search / extract / task (MPP on Tempo mainnet).
-        </p>
-        <p>
-          Open <code>/weather</code> for OpenWeather current conditions (MPP on Tempo mainnet).
-        </p>
-        <p>
-          Open <code>/openai</code> for OpenAI chat completions via MPP (<code>openai.mpp.tempo.xyz</code>).
-        </p>
-        <p>
-          Open <code>/anthropic</code> for Claude (Messages API + OpenAI-compatible chat) via MPP (
-          <code>anthropic.mpp.tempo.xyz</code>).
-        </p>
-        <p>
-          Open <code>/openrouter</code> for OpenRouter unified chat via MPP (<code>openrouter.mpp.tempo.xyz</code>).
-        </p>
-        <p>
-          Open <code>/perplexity</code> for Perplexity Sonar / search / embeddings via MPP (
-          <code>perplexity.mpp.tempo.xyz</code>).
-        </p>
-        <p>
-          Open <code>/alchemy</code> for Alchemy JSON-RPC + NFT API v3 via MPP (<code>mpp.alchemy.com</code>).
-        </p>
-        <p>
-          Open <code>/fal</code> for fal.ai image / video / audio models via MPP (<code>fal.mpp.tempo.xyz</code>).
-        </p>
-        <p>
-          Open <code>/replicate</code> for Replicate model runs / predictions via MPP (
-          <code>replicate.mpp.paywithlocus.com</code>).
-        </p>
-        <p>
-          Open <code>/kicks</code> for dedicated KicksDB market intelligence tests.
-        </p>
-        <p>
-          Open <code>/tip20</code> for dedicated TIP-20 token launch testing.
-        </p>
-      </section>
-
-      <section className="card api">
         <h3>Global Transaction History</h3>
         <p>Relevant live transactions recorded across testnet and mainnet.</p>
         <div className="actions">
@@ -1067,6 +1004,33 @@ function App() {
           )}
         </ul>
       </section>
+
+      <nav className="hub-app-directory" aria-label="All app routes">
+        <div className="hub-nav__directory">
+          <h2 className="hub-nav__directory-heading">All app routes</h2>
+          <p className="hub-nav__directory-lede">
+            Open a dedicated page for full-screen demos, MPP gateways, or CLI wire tests. This hub stays on{' '}
+            <code>/</code>.
+          </p>
+          <div className="hub-route-groups">
+            {HUB_ROUTE_GROUPS.map((group) => (
+              <div key={group.label} className="hub-route-group">
+                <div className="hub-route-group__label">{group.label}</div>
+                <div className="hub-route-group__links">
+                  {group.routes.map((r) => (
+                    <a key={r.href} className="hub-route-link" href={r.href}>
+                      <span className="hub-route-link__path">{r.href}</span>
+                      <span className="hub-route-link__title">{r.title}</span>
+                      <span className="hub-route-link__hint">{r.hint}</span>
+                    </a>
+                  ))}
+                </div>
+                {group.footnote ? <p className="hub-route-group__footnote">{group.footnote}</p> : null}
+              </div>
+            ))}
+          </div>
+        </div>
+      </nav>
     </main>
   )
 }

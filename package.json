@@ -8,7 +8,8 @@
     "dev": "vite",
     "server": "node server/index.js",
     "dev:full": "concurrently \"npm run server\" \"npm run dev\"",
-    "build": "tsc -b && vite build",
+    "build:llm": "node scripts/build-llm-full.mjs",
+    "build": "npm run build:llm && tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview"
   },

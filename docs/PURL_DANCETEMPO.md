@@ -1,6 +1,6 @@
 # Testing [Stripe `purl`](https://github.com/stripe/purl) with DanceTempo
 
-**See also:** in-app showcase for the official [**Tempo Wallet CLI**](https://github.com/tempoxyz/wallet) at **`/tempo-wallet`** — passkey login and `tempo request` for the same MPP patterns.
+**See also:** in-app **`/purl`** page — copy-paste `curl` + `purl` wire for **testnet and mainnet** (`judge-score` live routes). In-app showcase for the official [**Tempo Wallet CLI**](https://github.com/tempoxyz/wallet) at **`/tempo-wallet`** — passkey login and `tempo request` for the same MPP patterns.
 
 ---
 
@@ -77,3 +77,24 @@ Use **`--confirm`** if you want an extra prompt.
 | `purl inspect` (GET) | **404** on POST-only route — not applicable without a GET handler |
 
 **Conclusion:** `purl` is **compatible at the payment-requirement layer** with DanceTempo’s MPP/402 responses on Tempo testnet. For automation, prefer **`purl --dry-run`** or a funded **`purl`** wallet on **testnet** before any mainnet use.
+
+---
+
+## Mainnet wire (same pattern, **real value**)
+
+Use path suffix **`mainnet`** and JSON with `"network":"mainnet"`. **Only** after testnet dry-run succeeds and you intend to spend on chain **4217**.
+
+```bash
+curl -s -w "\nHTTP:%{http_code}\n" -X POST \
+  http://127.0.0.1:8787/api/dance-extras/live/judge-score/mainnet \
+  -H "Content-Type: application/json" \
+  -d '{"network":"mainnet","battleId":"b","roundId":"r","judgeId":"j","dancerId":"d","score":9}'
+```
+
+```bash
+BODY='{"network":"mainnet","battleId":"b","roundId":"r","judgeId":"j","dancerId":"d","score":9}'
+purl --dry-run -v -X POST --json "$BODY" \
+  "http://127.0.0.1:8787/api/dance-extras/live/judge-score/mainnet"
+```
+
+Your purl wallet must be funded on **Tempo mainnet**; verify `MPP_RECIPIENT` and server MPP config before omitting `--dry-run`.

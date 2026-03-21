@@ -1,0 +1,1327 @@
+# DanceTempo / DanceTech Protocol — LLM context bundle
+
+**Purpose:** Single file to paste into an LLM system prompt, upload to a coding agent, or feed RAG — **full orientation** to this repository.
+
+**Generated:** 2026-03-21T10:05:16.975Z (re-run `npm run build:llm` after doc edits)
+
+**Download (running app):** `/llm-full.txt` from the dev server or production site.
+
+**In repo:** `public/llm-full.txt` (served as static file; also clone and open locally).
+
+---
+
+## How to use
+
+1. **ChatGPT / Claude / etc.:** Attach this file or paste relevant sections into project instructions.
+2. **Cursor / IDE agents:** @-mention `public/llm-full.txt` or paste the sections you need.
+3. **OpenClaw / automation:** Prefer `CLAWHUB.md` for tribal debugging + this bundle for full product/API context.
+
+## What’s inside (concatenated)
+
+The following sections are **verbatim** exports from the repo (order matters for context).
+
+---
+
+
+
+## >>> BEGIN FILE: README.md
+
+# DanceTech Protocol · DanceTempo
+
+**DanceTech Protocol** is an open **pattern stack** for the dance industry: verifiable payments, session metering, media rights, reputation, AI usage billing, and event ops—**settled on [Tempo](https://tempo.xyz)** and **authorized via MPP / x402** so organizers, dancers, fans, and agents can pay APIs and each other with predictable receipts.
+
+**DanceTempo** (this repo, `dancetempo`) is the **reference implementation**: a single hub, dedicated full-screen flows, and a Node/Express API that encodes the protocol in production-style code. Fork it to ship your own product; treat [`DANCETECH_USE_CASES.md`](./DANCETECH_USE_CASES.md) as the behavioral contract.
+
+### Interaction modes (humans & agents)—one protocol, not four
+
+DanceTech Protocol is **one** stack (Tempo settlement + MPP/x402 authorization). What changes is **who authorizes spend** and **who receives value**—often described informally as human↔human, human↔agent, or agent↔agent flows. Those labels are **use-case shorthand**, not separate protocols.
+
+| Shorthand | Typical meaning here | How it maps in this repo |
+|-----------|----------------------|----------------------------|
+| **Human → human** | Dancer, fan, or organizer pays another person or org (entry fees, passes, splits). | Battle, fan pass, clip sale scaffolds; wallet-mediated `charge` / payout flows. |
+| **Human → agent** | A person approves payment; an **orchestrator** (UI wizard, MCP tool, script) calls your HTTP APIs. | Same routes as the hub; the **human still signs** with the browser wallet unless you delegate. |
+| **Agent → human** | Automated action delivers something to a person (email, alert, receipt, pass). | Ops bot + AgentMail, notifications; fulfillment after payment—not a second payment “protocol.” |
+| **Agent → agent** | Service-to-service: backends, cron, or **machine payments** between APIs. | `402` + `mppx` on the server, **API keys** where allowed (e.g. AgentMail after MPP), webhooks, `POST /api/*` from trusted workers. |
+
+**Roles (mental model):** **Payer** (human wallet vs server treasury vs delegated agent), **beneficiary** (human vs org vs system), **channel** (browser vs server). Ambient agents (e.g. coding assistants) consume **skills** like [`CLAWHUB.md`](./CLAWHUB.md) and [`.cursor/skills/clawhub`](./.cursor/skills/clawhub/SKILL.md); runtime agents should call the **same** Express contracts with explicit trust boundaries.
+
+---
+
+## What “super app” means here
+
+| Layer | Role |
+|--------|------|
+| **Hub (`/`)** | Single home for **10+ DanceTech use cases** (battle entry, coaching, beats, judges, cypher pots, fan pass, reputation, studio AI, bot actions, etc.) with API previews and demos. |
+| **Dedicated frontends** | Full-screen flows for **live Tempo testnet/mainnet** and complex UX (wallet, network, receipts, recovery). |
+| **Backend (`server/`)** | Express API: MPP intents, live payment verification, proxies to paid APIs (KicksDB, AgentMail, travel, weather, etc.). |
+| **Integrations** | Optional rails: AgentMail, StablePhone, StableSocial, StableTravel, Laso cards, Suno, Parallel, OpenWeather, OpenAI MPP (`/openai`), Google Maps, Aviationstack, KicksDB, TIP‑20 factory, OpenAI explainer. |
+
+---
+
+## Tech stack
+
+- **Frontend:** React 19, TypeScript, Vite 8  
+- **Payments:** `mppx` (client + server), **viem** + **Tempo** chain actions (`viem/tempo`, `viem/chains`)  
+- **Backend:** Node.js, Express 5  
+- **Docs in repo:** [`DANCETECH_USE_CASES.md`](./DANCETECH_USE_CASES.md) — flows, endpoints, testing notes  
+- **Landing / Lovable handoff:** [`DANCE_TECH_PROTOCOL_AZ.md`](./DANCE_TECH_PROTOCOL_AZ.md) — A–Z narrative + GitHub links for marketing sites  
+- **Stripe `purl` CLI:** route **`/purl`** — copy-paste `curl` + `purl` for **testnet + mainnet**; long-form [`docs/PURL_DANCETEMPO.md`](./docs/PURL_DANCETEMPO.md)  
+- **Tempo Wallet CLI (official):** route **`/tempo-wallet`** — in-app showcase + copy-paste for [`tempoxyz/wallet`](https://github.com/tempoxyz/wallet); verification log [`docs/TEMPO_WALLET_TEST.md`](./docs/TEMPO_WALLET_TEST.md)  
+- **Agent / tribal knowledge:** [`CLAWHUB.md`](./CLAWHUB.md) — successes, failures, debugging checklists  
+- **LLM context bundle (single file):** [`public/llm-full.txt`](./public/llm-full.txt) — concatenated README + use cases + ClawHub + protocol docs; **regenerate** with `npm run build:llm`. **Download** from the running app at **`/llm-full.txt`** (hub button: “Download LLM context bundle”) or from GitHub raw after push.
+
+### Local dev (Vite + API)
+
+| Command | What runs |
+|--------|------------|
+| `npm run dev` | Vite only — **proxies `/api` → `http://localhost:8787`** |
+| `npm run server` | Express API (default **port 8787**) |
+| `npm run dev:full` | Both (recommended for live MPP flows) |
+
+If the UI shows **`Cannot POST /api/...`** (HTML 404), the backend on **8787** is missing that route (often an **old** `node server/index.js` still running). **Restart** `npm run server`. Quick check: open **`GET http://localhost:8787/api/dance-extras/live`** — you should see JSON with `flowKeys`.
+
+---
+
+## Tempo & MPP (quick reference)
+
+- **Tempo testnet (Moderato):** chain ID `42431` — typical fee/path asset: **pathUSD**  
+- **Tempo mainnet:** chain ID `4217` — common fee token: **USDC** (e.g. bridged USDC.e where configured)  
+- **MPP (Machine Payments Protocol):** server creates/verifies intents; browser can pay via injected wallet (`MetaMask` / Tempo wallet) using `MppxClient` + `tempoClient`.  
+- **x402:** some third-party APIs return `402` + `WWW-Authenticate`; the app forwards challenges so `mppx` can pay and retry.
+
+### MPP service directory (`mpp.dev`)
+
+The **[Machine Payments Protocol service catalog](https://mpp.dev/services)** lists hosted integrations (base URLs, `POST` paths, and per-call pricing). Use it when adding new rails or checking upstream contracts. Agent-oriented discovery is often linked from that site as **`llms.txt`**.
+
+**How this repo maps to the catalog**
+
+| Catalog idea | In DanceTempo |
+|--------------|----------------|
+| Wallet pays via **402 → `mppx`** on **Tempo mainnet** | Same pattern on `/music` (Suno), `/travel`, `/kicks`, `/card`, etc. |
+| **AgentMail** has two entry points | **`AGENTMAIL_BASE_URL`** (`https://api.agentmail.to`) for Bearer/API-key flows; **`AGENTMAIL_MPP_BASE_URL`** (`https://mpp.api.agentmail.to`) for wallet-paid MPP passthrough — both are named in `.env.example` and match [AgentMail on MPP](https://mpp.dev/services#agentmail). |
+| **Suno** at `suno.mpp.paywithlocus.com` | **`SUNO_BASE_URL`** + `/suno/generate-music` — no vendor “Suno API key” in the UI; payment is MPP headers from the wallet. |
+| **Parallel** at `parallelmpp.dev` | **`PARALLEL_BASE_URL`** — `/parallel` proxies search / extract / task (+ task poll). |
+| **OpenWeather** at `weather.mpp.paywithlocus.com` | **`OPENWEATHER_BASE_URL`** — `/weather` uses wallet MPP; optional **`OPENWEATHER_API_KEY`** for server `appid`. |
+| **OpenAI** at `openai.mpp.tempo.xyz` | **`OPENAI_MPP_BASE_URL`** — `/openai` proxies chat, images, speech & transcription (see `POST /api/openai/*`). |
+
+---
+
+## Routes (dedicated apps)
+
+| Path | Purpose |
+|------|---------|
+| `/` | Main hub — all use cases + global transaction history |
+| `/battle` | Battle entry + auto payout (live testnet/mainnet) |
+| `/coaching` | Coaching minutes marketplace (live payments) |
+| `/beats` | Beat API licensing (live payments) |
+| `/dance-extras` | Seven core DanceTech flows (judge, cypher, clips, reputation, studio AI, bot, fan pass); **simulate** mock APIs or **Live Tempo MPP** via `POST /api/dance-extras/live/:flowKey/:network` |
+| `/card` | Virtual debit card (Laso / MPP + demo fallback) |
+| `/travel` | StableTravel, Aviationstack, Google Maps |
+| `/email` | AgentMail ops (wallet-paid relay + send) |
+| `/ops` | AgentMail + StablePhone console |
+| `/social` | StableSocial |
+| `/music` | Suno |
+| `/parallel` | Parallel search / extract / task (MPP) |
+| `/weather` | OpenWeather current conditions (MPP) |
+| `/openai` | OpenAI chat completions (MPP gateway) |
+| `/kicks` | KicksDB (live MPP + simulate) |
+| `/tip20` | TIP‑20 token launch & post-launch ops |
+| `/tempo-wallet` | Showcase: [Tempo Wallet CLI](https://github.com/tempoxyz/wallet) (MPP + `tempo request`; pairs with `/dance-extras` live routes) |
+| `/purl` | Showcase: [Stripe purl](https://github.com/stripe/purl) — `curl` + `purl --dry-run` / live pay for **testnet + mainnet** live MPP URLs |
+
+---
+
+## Core DanceTech capabilities (hub)
+
+Examples wired in the main app and/or API:
+
+1. **Battle entry + auto payout** — intents, results, payout execution  
+2. **Judge score submission** — paid write API pattern  
+3. **Cypher micropot** — session-style sponsorship  
+4. **Coaching minutes** — start / tick usage / end + receipt  
+5. **Beat licensing** — intent, grant access, recovery helpers  
+6. **Clip marketplace** — listing + purchase scaffold  
+7. **Fan reputation attestations**  
+8. **Studio AI usage billing**  
+9. **Tournament ops bot** — actions + AgentMail / phone / travel hooks  
+10. **Fan membership battle pass**  
+
+Full step-by-step and endpoint list: **[`DANCETECH_USE_CASES.md`](./DANCETECH_USE_CASES.md)**.
+
+---
+
+## Quick start
+
+```bash
+npm install
+cp .env.example .env
+# Edit .env: API keys, MPP_RECIPIENT, Tempo flags, third-party URLs as needed.
+
+# Terminal 1 — API (default port 8787)
+npm run server
+
+# Terminal 2 — Vite dev server (proxies /api → backend)
+npm run dev
+```
+
+Or one command:
+
+```bash
+npm run dev:full
+```
+
+Open **http://localhost:5173** for the hub, or a path above (e.g. **http://localhost:5173/battle**).
+
+**Production build:**
+
+```bash
+npm run build
+npm run preview   # optional static preview; API still needs `npm run server` or your host
+```
+
+---
+
+## Environment variables
+
+Copy **`.env.example`** → **`.env`**. Never commit **`.env`** (it is gitignored).
+
+Typical groups:
+
+- **OpenAI** — `OPENAI_API_KEY` (optional; hub explainer + optional Bearer on MPP proxy), `OPENAI_MPP_BASE_URL` (default `https://openai.mpp.tempo.xyz`), `OPENAI_MODEL` (hub explainer default)  
+- **MPP / Tempo** — `MPP_RECIPIENT`, `TMPO_TESTNET`, `PAYMENT_MODE`, etc.  
+- **AgentMail** — `AGENTMAIL_API_KEY` (optional), `AGENTMAIL_BASE_URL` (direct API), **`AGENTMAIL_MPP_BASE_URL`** (wallet-paid host; default matches [mpp.dev#agentmail](https://mpp.dev/services#agentmail)), `AGENTMAIL_INBOX_ID`, `AGENTMAIL_SEND_FEE`  
+- **Integrations** — KicksDB, StablePhone, StableSocial, Laso, Suno (`SUNO_BASE_URL`), Parallel (`PARALLEL_BASE_URL`), OpenWeather (`OPENWEATHER_BASE_URL`, optional `OPENWEATHER_API_KEY`), OpenAI MPP (`OPENAI_MPP_BASE_URL`), maps, aviation, etc.  
+
+See `.env.example` for the full list and placeholders.
+
+---
+
+## Repository layout
+
+```
+├── src/           # React apps (App + route-specific *App.tsx)
+├── server/        # Express API (index.js, payments.js)
+├── public/        # Static assets
+├── DANCETECH_USE_CASES.md
+├── DANCE_TECH_PROTOCOL_AZ.md  # A–Z protocol copy for landing pages (e.g. Lovable)
+├── docs/PURL_DANCETEMPO.md    # Stripe purl CLI vs DanceTempo 402
+├── CLAWHUB.md     # Learning notes, failures, debugging playbooks
+├── LOVABLE_HANDOFF.md
+└── vite.config.ts # dev proxy: /api → http://localhost:8787
+```
+
+---
+
+## Security & operations
+
+- Keep **secrets in `.env`** only; rotate keys if exposed.  
+- **Live mainnet** flows spend real assets — test on **testnet** first.  
+- Transaction hashes can be recorded locally (see hub + dedicated pages) for audit; explorers: [Tempo mainnet](https://explore.tempo.xyz), [testnet](https://explore.testnet.tempo.xyz).  
+
+---
+
+## Contributing / fork
+
+1. Fork or clone this repo  
+2. Configure `.env` for the use cases you need  
+3. Extend `server/index.js` or add a new `src/*App.tsx` + route in `src/main.tsx`  
+
+---
+
+## License
+
+This project is licensed under the MIT License. See [`LICENSE`](./LICENSE).
+
+---
+
+**DanceTech Protocol** · **DanceTempo** — *Tempo + MPP for dance: one reference stack.*
+
+
+## <<< END FILE: README.md
+
+
+## >>> BEGIN FILE: CLAWHUB.md
+
+# ClawHub Learning Notes (DanceTempo / DanceTech Protocol)
+
+## LLM context bundle (`llm-full.txt`)
+
+For **full-repo orientation** in one paste (ChatGPT, Claude, Cursor, OpenClaw): use **`public/llm-full.txt`**, built from README + this file + `DANCETECH_USE_CASES.md` + `DANCE_TECH_PROTOCOL_AZ.md` + purl/tempo wallet docs.
+
+- **Regenerate:** `npm run build:llm` (runs automatically before `npm run build`).
+- **In the browser:** open **`/llm-full.txt`** or use the hub **“Download LLM context bundle”** button on `/`.
+- **In GitHub:** Raw URL is `https://raw.githubusercontent.com/<org>/<repo>/main/public/llm-full.txt` after you push.
+
+Keep **this file (`CLAWHUB.md`)** for debugging checklists and failures; pair it with `llm-full.txt` when an agent needs both product context and tribal knowledge.
+
+---
+
+This is a “tribal knowledge” file for quickly onboarding OpenClaw (and any future agent) to the DanceTempo repository:
+
+- what the repo is (**DanceTech Protocol** reference stack on Tempo + MPP),
+- what succeeded,
+- what failed and why,
+- and the repeatable best practices that prevent re-learning the hard parts.
+
+---
+
+## What this repo is
+
+**DanceTech Protocol** (this repo’s framing) is the set of **interoperable payment + ops patterns** for the dance industry—battle entry, coaching, licensing, judging, sponsorship, reputation, AI metering, ops automation, fan membership—implemented with **Tempo** settlement and **MPP / x402** machine payments. DanceTempo is the **reference superapp** that encodes those patterns in code.
+
+DanceTempo is built around:
+
+- **Tempo** (on-chain payments and receipts)
+- **MPP** via `mppx` (client/server-side handling of `402 Payment Required` challenges)
+- **Dedicated use-case routes** (hub + full-screen flows)
+- A **Node/Express backend** that creates/verifies MPP intents and proxies/handles integrations.
+
+Core docs to reuse:
+
+- `README.md` (high-level “superapp” framing + route list)
+- `DANCETECH_USE_CASES.md` (the flow-by-flow contract and API mappings)
+- `server/index.js` (the real implementation patterns and integration edge handling)
+
+---
+
+## Successes (what worked)
+
+1. **Stripe `purl` + DanceTempo `402` (MPP on Tempo testnet)**  
+   - With a **Tempo** keystore (`purl wallet add --type tempo`), `purl --dry-run -X POST --json '…' http://127.0.0.1:8787/api/dance-extras/live/judge-score/testnet` correctly detects **402**, protocol **mpp**, network **eip155:42431**, **0.01 pathUSD**.  
+   - `purl inspect` uses **GET**; POST-only routes return 404 — use **dry-run + POST** for dance-extras live. See **`docs/PURL_DANCETEMPO.md`**.
+
+2. **Superapp README now reflects the real architecture**
+   - Added a “super app” definition that maps: hub vs dedicated routes vs backend vs integrations.
+   - Included the dedicated route table so explanations don’t drift from implementation.
+   - Documented quick start (`npm run server`, `npm run dev`, `npm run dev:full`) and environment guidance.
+
+3. **GitHub push worked after unrelated-history + README conflict**
+   - When the remote `main` already had commits, the first push failed (non-fast-forward).
+   - Pulling unrelated histories caused a `README.md` conflict.
+   - Resolution strategy: keep the README focused (short title/one-line description) and remove template bulk rather than trying to merge two incompatible README styles.
+
+4. **AgentMail “email” flow got to a working end-to-end pattern**
+   - Earlier attempts hit MPP/inbox scope mismatches (notably `Inbox not found`).
+   - The final working approach:
+     - the wallet pays **this backend** using **Tempo MPP** (`mppx` server charge),
+     - then the backend sends the email via **AgentMail’s API key endpoint** (`AGENTMAIL_API_KEY`).
+   - This preserves “wallet-paid UX” while avoiding fragile inbox scope behavior in passthrough mode.
+
+5. **`/dance-extras` live MPP + shared server handler**
+   - `POST /api/dance-extras/live/:flowKey/:network` runs `mppx.tempo.charge` then `executeDanceExtraFlow` so the seven core DanceTech scaffolds share one payment path.
+   - `GET /api/dance-extras/live` returns `flowKeys` — use it to verify the running Node process actually has the route (see failure §5).
+
+6. **AgentMail bot flow: always send `inbox_id`**
+   - `/api/ops/agentmail/send` requires `inbox_id` (or `AGENTMAIL_INBOX_ID` on the server).
+   - Demo default in the client: `streetkode@agentmail.to` via `src/agentmailDemo.ts` (`AGENTMAIL_DEMO_INBOX_ID`).
+
+7. **Server integration patterns are consistent**
+   - For `402`-capable third-party endpoints:
+     - if upstream returns `402`, the backend should pass that challenge back to the client (so `mppx` can solve).
+   - For “paid endpoints then poll” integrations:
+     - use the correct auth header strategy for the paid + polling phases (x402 vs SIWX vs bearer-token style).
+
+---
+
+## Failures (what broke) and how to recognize it
+
+### 1) GitHub push: remote already had commits
+
+**Symptom**
+- Push rejected with a non-fast-forward error.
+
+**Cause**
+- The local repo history and remote `origin/main` history did not share a common base.
+
+**Fix**
+- Pull with `--allow-unrelated-histories`, resolve conflicts, then push.
+- For docs conflicts, keep the README aligned to the repo’s current purpose instead of merging incompatible template text.
+
+### 2) README merge conflicts
+
+**Symptom**
+- `README.md` conflict markers appeared after merging unrelated histories.
+
+**Cause**
+- A template README on the remote conflicted with the locally-generated template/short description.
+
+**Fix**
+- Prefer a single coherent README rather than trying to “merge” two styles.
+- Keep the “superapp capability” content, route list, and setup instructions. Remove template bulk.
+
+### 3) AgentMail: `Inbox not found` / inbox scope mismatch
+
+**Symptom**
+- AgentMail send returns an error indicating the inbox doesn’t exist or isn’t accessible.
+
+**Common causes**
+- `AGENTMAIL_INBOX_ID` not set and no `inbox_id` provided in the request body.
+- Inbox ID mismatch vs the paid-scope the integration expects.
+- Using passthrough MPP mode while the integration expects a specific inbox access scope.
+
+**Fix pattern that worked**
+- If `AGENTMAIL_API_KEY` is available:
+  - pay via Tempo MPP to this backend,
+  - send via AgentMail stable API endpoint using the API key,
+  - return the upstream result.
+
+### 4) MPP / x402 mismatch and recurring `402` loops
+
+**Symptom**
+- The frontend repeatedly encounters `402` (or can’t recover from an auth challenge).
+
+**Common causes**
+- Hitting the wrong base URL for the x402-capable endpoint.
+- Not preserving `402` challenge headers/body back to the `mppx` client.
+- Forwarding the wrong headers for the solved/authorized phase.
+
+**Fix**
+- Ensure the backend returns the upstream `402` response directly (not a generic error).
+- Ensure “forwarding” of headers follows the solved payment stage (e.g. `payment`, `payment-receipt`).
+
+### 5) `Cannot POST /api/dance-extras/live/...` (HTML 404)
+
+**Symptom**
+- Telemetry shows `Cannot POST /api/dance-extras/live/<flow>/<network>` (Express default 404 HTML).
+
+**Cause**
+- Vite proxies `/api` to `http://localhost:8787`, but the **Express process on 8787 is an old build** (started before the live route existed) or isn’t this repo’s `server/index.js`.
+
+**Fix**
+- Restart the API: stop the old `node` process, run `npm run server` or `npm run dev:full`.
+- Verify: `GET http://localhost:8787/api/dance-extras/live` must return JSON with `flowKeys`. If that 404s, you’re still on the wrong/stale server.
+
+### 6) AgentMail: `Missing inbox_id for AgentMail send`
+
+**Symptom**
+- `400` with `Missing inbox_id for AgentMail send` after bot-action + mail step.
+
+**Cause**
+- Request body omitted `inbox_id` and `AGENTMAIL_INBOX_ID` is unset on the server.
+
+**Fix**
+- Pass `inbox_id` in the JSON body (demo: `streetkode@agentmail.to`) and/or set `AGENTMAIL_INBOX_ID` in `.env`.
+- For Bearer sends, still need `AGENTMAIL_API_KEY`.
+
+### 7) Invalid payment parameters (e.g. `feeToken`, network, or amount format)
+
+**Symptom**
+- Payment failures that mention token/fee/address/chain inconsistencies.
+
+**Common causes**
+- Using the wrong chain network (Tempo testnet vs mainnet).
+- Passing amount in base units when the `mppx` chain method expects a decimal-string amount (see server implementation).
+- Misconfigured recipients/fee tokens for a specific provider method.
+
+**Fix**
+- Keep `testnet` as the default for “first get it working” debugging.
+- Match the backend chain method config:
+  - `tempoModerato` chain for testnet-like flows
+  - `tempo` chain for mainnet-like flows
+- Use decimal-string amounts (server uses `toFixed(2)` in key payment handlers).
+
+### 8) `/dance-extras/foo` loaded the hub instead of ExtraDanceApp
+
+**Symptom**
+- Visiting `/dance-extras/live` showed the main hub “Extra Use Case” panel.
+
+**Cause**
+- Router in `main.tsx` only matched pathname `=== '/dance-extras'`.
+
+**Fix**
+- Match `pathname === '/dance-extras' || pathname.startsWith('/dance-extras/')` so subpaths render `ExtraDanceApp`.
+
+---
+
+## Best practices (repeatable habits)
+
+### Documentation
+
+1. Treat `DANCETECH_USE_CASES.md` as the contract source of truth.
+2. Keep `README.md` as the “product layer” summary:
+   - superapp definition,
+   - stack,
+   - route table,
+   - quick start.
+3. When asked to explain “superapp capabilities”, always map:
+   - hub vs dedicated route vs backend endpoints vs integrations.
+
+### Payment flow correctness
+
+1. For x402 endpoints:
+   - on upstream `402`, return the challenge response so `mppx` can solve.
+2. For solved payment forwarding:
+   - forward the correct auth headers from the incoming request.
+3. Keep a consistent “two-stage” mental model:
+   - paid endpoint interaction (x402 / Tempo MPP solve),
+   - polling or follow-up calls (often SIWX or bearer-token style depending on provider).
+
+### Engineering hygiene
+
+1. Never commit `.env` (it is gitignored).
+2. Prefer `AGENTMAIL_INBOX_ID` + `AGENTMAIL_API_KEY` configuration over fragile passthrough scope behavior when possible.
+3. Use `npm run dev:full` for the fastest end-to-end loop:
+   - Vite on `5173`,
+   - Express API on port `8787`.
+
+### Fast debugging checklist
+
+1. Confirm network selection (`testnet` vs `mainnet`) matches the endpoint expectation.
+2. Confirm amount format (decimal-string, not base units) and fee/path configuration.
+3. For integration errors:
+   - if `402`: preserve challenge response,
+   - if `401/403`: check the correct post-payment auth phase (SIWX vs bearer token vs API key).
+4. If AgentMail inbox errors appear:
+   - check `AGENTMAIL_INBOX_ID`,
+   - prefer the API-key send strategy if `AGENTMAIL_API_KEY` is set.
+
+---
+
+## “Where to look” map
+
+1. Superapp overview + route table: `README.md`
+2. Use-case API mappings and flow steps: `DANCETECH_USE_CASES.md`
+3. Implementation patterns and provider edge cases:
+   - `server/index.js` (integration handlers, `402` passthrough, AgentMail send/inbox create)
+4. Dev proxy: `vite.config.ts` (proxy `/api` -> `http://localhost:8787`)
+5. Dance-extras live MPP: `POST /api/dance-extras/live/:flowKey/:network`, verify with `GET /api/dance-extras/live`
+6. Demo AgentMail inbox constant: `src/agentmailDemo.ts`
+
+
+
+## <<< END FILE: CLAWHUB.md
+
+
+## >>> BEGIN FILE: DANCETECH_USE_CASES.md
+
+# DanceTech Finance Use Cases (Tempo + MPP)
+
+This document defines the full DanceTech use case set for the current prototype, with practical flow steps, API mappings, and testing notes.
+
+## Interaction modes (humans & agents)
+
+**DanceTech Protocol** stays **one** contract: payments and API access are governed by **Tempo** + **MPP/x402**. Colloquial pairings (human↔human, human↔agent, agent↔human, agent↔agent) describe **who authorizes** and **who benefits**, not four different protocol specs.
+
+- **Human ↔ human** — Wallet-funded commerce between people/orgs (battles, passes, royalties). Primary flows in §1–§10 below.
+- **Human → agent (orchestrated)** — A human approves spend; an agent or script **calls the same `POST /api/...` routes** (e.g. from MCP, CI, or an assistant). The signing wallet is usually still the user’s unless you implement delegation or server-side treasury.
+- **Agent → human** — Backend or paid job **delivers** to a person (email, SMS, pass state). Example: tournament ops bot + AgentMail after a `charge`.
+- **Agent → agent** — **Machine-to-machine**: server keys, HMAC, or **x402** between services; overlaps with “machine payments” in MPP. This repo often uses **wallet MPP to this backend**, then **Bearer/API-key** upstream (e.g. AgentMail) to avoid inbox scope issues.
+
+When testing, default to **Tempo testnet** and treat **402** responses as “payment required”—whether the client is a browser or an automated caller that can complete the challenge per your security model.
+
+## Scope
+
+- **MPP catalog:** Hosted integrations (Suno, AgentMail, KicksDB, weather, …) are listed at [mpp.dev/services](https://mpp.dev/services) with base URLs and prices; this repo’s proxies use the same hosts via env (see `README.md` and `.env.example`).
+- Network: Tempo `testnet` and `mainnet`
+- Payment rail: MPP style `charge` and `session` patterns
+- Locus bridge: Laso Finance endpoints can be used for card issuance and status polling
+- Status: Battle flow has a dedicated frontend; other use cases are implemented as backend scaffolds and/or demo interactions
+
+## Environment and Networks
+
+- Tempo testnet
+  - Chain ID: `42431`
+  - Default currency: `pathUSD`
+- Tempo mainnet
+  - Chain ID: `4217`
+  - Default currency: `USDC`
+
+Network can be selected in the dedicated Battle frontend. Backend also accepts per-request `network` for battle endpoints.
+
+---
+
+## 1) Battle Entry + Auto Payout
+
+Intent type: `charge`
+
+### User flow steps
+
+1. Organizer sets battle fee and opens registration.
+2. Dancer creates entry intent and receives payment request.
+3. Payment is finalized (simulated in scaffold).
+4. Organizer finalizes results and executes payout.
+
+### API mapping
+
+- `POST /api/battle/entry`
+  - Create intent or verify existing intent
+  - Optional body fields: `network`, `intentId`, `simulatePayment`
+- `POST /api/battle/result`
+- `POST /api/payout/execute`
+  - Optional body field: `network`
+- `GET /api/payout/:battleId`
+
+### Frontend status
+
+- Fully wired dedicated frontend in `src/App.tsx`.
+
+---
+
+## 2) Judge Score Submission as Paid Write API
+
+Intent type: `charge`
+
+### User flow steps
+
+1. Judge opens scoring console for active round.
+2. Judge submits score write.
+3. API stores record and returns receipt.
+4. Score becomes part of auditable event history.
+
+### API mapping
+
+- `POST /api/judges/score`
+
+---
+
+## 3) Real-Time Cypher Micropot Sponsorship
+
+Intent type: `session` style behavior
+
+### User flow steps
+
+1. Cypher pot opens for active dancer.
+2. Fan/support call contributes micro amount.
+3. Pot total updates in real time.
+4. Pot snapshot can be used for end-of-cypher payout logic.
+
+### API mapping
+
+- `POST /api/cypher/micropot/contribute`
+
+---
+
+## 4) Coaching Minutes Marketplace
+
+Intent type: `session`
+
+### User flow steps
+
+1. Student starts coaching session with selected rate.
+2. Usage ticks over time.
+3. Session ends, total is computed, receipt returned.
+4. Receipt can be fetched for display/audit.
+
+### API mapping
+
+- `POST /api/coaching/start`
+- `POST /api/coaching/ping-usage`
+- `POST /api/coaching/end`
+- `GET /api/coaching/:id/receipt`
+
+---
+
+## 5) Beat API Licensing
+
+Intent type: `charge`
+
+### User flow steps
+
+1. Consumer requests license intent for selected beat.
+2. Payment request is created.
+3. Access is granted against license id.
+4. Stream/download URL is issued with receipt.
+
+### API mapping
+
+- `POST /api/beats/:id/license-intent`
+- `POST /api/beats/:id/grant-access`
+- `POST /api/music/suno/generate` (Suno integration for AI beat generation)
+
+### Suno relevance
+
+- Suno is relevant to Beat API Licensing because creators can generate new beat drafts, then route into paid licensing flows.
+- It supports rapid prototyping for event promos, battle intros, and creator packs tied to monetized beat distribution.
+- Tempo x MPP reference endpoint: [suno.mpp.paywithlocus.com](https://suno.mpp.paywithlocus.com)
+
+---
+
+## Parallel (web search / extract / task)
+
+Dedicated UI: **`/parallel`**. Uses **Tempo mainnet** + **`mppx`** for paid `POST`s; task status polling uses **`GET /api/parallel/task/:runId`** (proxied to upstream; typically no per-poll charge).
+
+### API mapping
+
+- `POST /api/parallel/search` → upstream `POST /api/search`
+- `POST /api/parallel/extract` → `POST /api/extract`
+- `POST /api/parallel/task` → `POST /api/task`
+- `GET /api/parallel/task/:runId` → `GET /api/task/:runId`
+
+Reference host: [parallelmpp.dev](https://parallelmpp.dev) · env: **`PARALLEL_BASE_URL`**
+
+---
+
+## OpenAI (chat via MPP gateway)
+
+Dedicated UI: **`/openai`**. Proxies **`POST /v1/chat/completions`** to **`OPENAI_MPP_BASE_URL`** (default `https://openai.mpp.tempo.xyz`) with **Tempo mainnet** + **`mppx`**. Optional **`OPENAI_API_KEY`** adds `Authorization: Bearer` on the server.
+
+The hub **AI explainer** still uses **`POST /api/ai/explain-flow`** and direct **`api.openai.com`** when **`OPENAI_API_KEY`** is set.
+
+### API mapping
+
+- `POST /api/openai/chat/completions` → `POST /v1/chat/completions`
+- `POST /api/openai/images/generations` → `POST /v1/images/generations`
+- `POST /api/openai/audio/speech` → `POST /v1/audio/speech` (audio returned as base64 JSON)
+- `POST /api/openai/audio/transcriptions` → `POST /v1/audio/transcriptions` (multipart `file` + `model`)
+- `POST /api/ai/explain-flow` (hub) → OpenAI direct (key required)
+
+Catalog: [mpp.dev/services](https://mpp.dev/services) (OpenAI on Tempo)
+
+---
+
+## Virtual Debit Card Creation (Laso Finance)
+
+Intent type: `charge`
+
+### User flow steps
+
+1. Operator submits funded card request with wallet and amount.
+2. Backend routes issuance through Locus/Laso MPP endpoint.
+3. API returns card creation response or payment challenge details.
+4. Operator polls card status endpoint until card is ready.
+
+### API mapping
+
+- `POST /api/card/create` (Laso-backed create with mock fallback)
+- `GET /api/card/:id` (Laso-backed status polling with mock fallback)
+
+### Laso relevance
+
+- Laso Finance bridges USDC agent balances into prepaid card rails for real-world merchant spend.
+- This is a practical payment bridge for DanceTech operations and payout-linked spending flows.
+- Integration references: [Locus docs](https://docs.paywithlocus.com/), [Locus llms-full](https://docs.paywithlocus.com/llms-full.txt)
+
+---
+
+## 6) Event Footage Clip Rights + Revenue Router
+
+Intent type: `charge`
+
+### User flow steps
+
+1. Buyer selects clip package.
+2. Split recipe is prepared (dancer/filmer/organizer).
+3. Sale is recorded and mock settlement receipt issued.
+4. Sale record is available for reporting and payouts.
+
+### API mapping
+
+- `POST /api/clips/sale`
+
+---
+
+## 7) Krump Reputation Passport
+
+Intent type: `charge`
+
+### User flow steps
+
+1. Issuer selects dancer and badge/claim type.
+2. Attestation write is submitted.
+3. Receipt confirms write.
+4. Profile trust signal can be surfaced in product.
+
+### API mapping
+
+- `POST /api/reputation/attest`
+
+---
+
+## 8) Studio AI Tooling Usage Billing
+
+Intent type: `charge` or metered `session` style
+
+### User flow steps
+
+1. Studio uses an AI tool endpoint.
+2. Usage event is submitted with units and mode.
+3. Receipt confirms billing event.
+4. Usage can be aggregated for billing/reporting.
+
+### API mapping
+
+- `POST /api/studio/ai-usage`
+
+---
+
+## 9) Tournament Ops Bot Actions
+
+Intent type: `charge`
+
+### User flow steps
+
+1. Organizer selects operation action (alerts, bracket updates, etc.).
+2. Bot action is submitted.
+3. Receipt confirms action write.
+4. Ops alert email is sent through AgentMail.
+5. Action appears in operations timeline.
+
+### API mapping
+
+- `POST /api/bot/action`
+- `POST /api/ops/agentmail/send`
+- `POST /api/ops/stablephone/call` (StablePhone AI ops calls)
+- `GET /api/ops/stablephone/call/:id` (StablePhone call status/transcript polling, SIWX)
+- `POST /api/social/stablesocial/instagram-profile` (StableSocial scrape trigger)
+- `GET /api/social/stablesocial/jobs?token=...` (StableSocial job polling, SIWX)
+- `POST /api/travel/stable/flights-search` (StableTravel integration for event travel logistics)
+- `POST /api/travel/aviationstack/flights` (Aviationstack integration for live flight tracking)
+- `POST /api/travel/googlemaps/geocode` (Google Maps geocoding for venue routing and logistics)
+- `POST /api/travel/openweather/current` (OpenWeather conditions for event-day operations)
+
+### AgentMail relevance
+
+- AgentMail is relevant to tournament operations for automated human notifications
+  (call-time alerts, bracket delay warnings, judge room updates).
+- It naturally complements the paid bot action write path by fan-outing operational
+  messages to staff inboxes.
+- Integration reference: [AgentMail docs](https://docs.agentmail.to/llms-full.txt)
+
+### StablePhone relevance
+
+- StablePhone is relevant for tournament operations because AI voice calls can handle urgent call-time reminders and live coordination tasks.
+- It complements bot actions by adding direct phone outreach with transcript/status polling for auditability.
+- Paid call initiation is x402/MPP and status polling is SIWX-authenticated wallet access.
+- Integration reference: [StablePhone](https://stablephone.dev)
+
+### StableSocial relevance
+
+- StableSocial is relevant for ops and growth because teams can collect social profile intelligence for dancers, events, and fan campaigns.
+- It complements tournament operations by enabling lightweight social monitoring workflows with token-based polling.
+- Trigger calls are paid (x402/MPP) and `/api/jobs` polling requires SIWX from the same wallet that paid.
+- Integration reference: [StableSocial](https://stablesocial.dev)
+
+### StableTravel relevance
+
+- StableTravel is relevant for tournament operations where organizers coordinate travel for dancers, judges, and crew.
+- It fits as a paid machine-to-machine API call pattern aligned with Tempo + MPP style rails.
+- Integration reference: [StableTravel API](https://stabletravel.dev/llms.txt)
+
+### Aviationstack relevance
+
+- Aviationstack is relevant for tournament operations because ops teams need live flight status and schedule intelligence.
+- It complements StableTravel search by enriching logistics with status tracking for arrivals, delays, and gate windows.
+- Integration reference: [Aviationstack API docs](https://docs.apilayer.com/aviationstack/docs/api-documentation?utm_source=AviationstackHomePage&utm_medium=Referral)
+
+### Google Maps relevance
+
+- Google Maps is relevant for tournament operations because crews need accurate venue coordinates, route planning, and dispatch precision.
+- It complements flight and hotel flows by turning raw addresses into reliable geospatial data for logistics tooling.
+- Integration reference: [Google Maps Platform](https://developers.google.com/maps)
+- Tempo x MPP reference endpoint: [googlemaps.mpp.tempo.xyz](https://googlemaps.mpp.tempo.xyz)
+
+### OpenWeather relevance
+
+- OpenWeather is relevant to tournament operations because weather conditions impact travel windows, call times, and safety.
+- It complements travel routing by adding real-time environmental context for venue and transport decisions.
+- Dedicated wallet-paid UI: **`/weather`** → `POST /api/travel/openweather/current` → MPP **`POST /openweather/current-weather`** JSON body `{ lat, lon, units? }` (not legacy GET `/data/2.5/weather`; see [mpp.dev](https://mpp.dev/api/services) OpenWeather).
+- Integration reference: [OpenWeather](https://openweathermap.org)
+- Tempo x MPP reference endpoint: [weather.mpp.paywithlocus.com](https://weather.mpp.paywithlocus.com)
+
+---
+
+## 10) Fan Membership Battle Pass
+
+Intent type: `charge`
+
+### User flow steps
+
+1. Fan selects membership tier.
+2. Purchase request is submitted.
+3. Pass record + receipt are returned.
+4. Perks can be enabled using pass status.
+
+### API mapping
+
+- `POST /api/fan-pass/purchase`
+- `POST /api/market/kicksdb/search` (KicksDB integration for sneaker market intelligence)
+
+### KicksDB relevance
+
+- KicksDB is relevant to fan membership because battle passes can include sneaker/merch perks driven by real market signals.
+- It helps ops and growth teams price drops, target inventory, and tailor tier benefits using product and pricing data.
+- Integration reference: [KicksDB docs](https://docs.kicks.dev/llms-full.txt)
+- Tempo x MPP reference endpoint: [kicksdb.mpp.tempo.xyz](https://kicksdb.mpp.tempo.xyz)
+
+---
+
+## AI Explainer
+
+Purpose: product-facing explanation generation for any flow.
+
+- `POST /api/ai/explain-flow`
+  - Uses `OPENAI_API_KEY` on server side only
+  - Payload: `flowTitle`, `flowSubtitle`, `steps[]`
+
+---
+
+## Testing Runbook
+
+## Prerequisites
+
+- Install dependencies:
+  - `npm install`
+- Start app and API:
+  - `npm run dev:full`
+
+## Battle dedicated frontend
+
+Open `http://localhost:5173` and run:
+
+1. Select network (`testnet` or `mainnet`).
+2. Click `1. Create Entry Intent`.
+3. Click `2. Simulate Payment`.
+4. Click `3. Finalize Results`.
+5. Click `4. Execute Payout`.
+6. Optional: `Fetch Payout`.
+
+Observe telemetry:
+
+- status
+- selected network and API chain id
+- intent id
+- payout count
+- latest action log
+
+## Endpoint smoke tests (example)
+
+Use `curl` for any endpoint with JSON body and verify:
+
+- HTTP status is 2xx
+- response is JSON
+- receipt/payload fields are present
+
+---
+
+## Notes and Next Iterations
+
+- Current implementation is scaffold-first and uses in-memory storage.
+- Receipts are mock receipts for local flow testing.
+- Recommended next step:
+  - persist records in a DB,
+  - add auth/roles,
+  - add webhook signature and retry handling for asynchronous settlement paths.
+
+
+## <<< END FILE: DANCETECH_USE_CASES.md
+
+
+## >>> BEGIN FILE: DANCE_TECH_PROTOCOL_AZ.md
+
+# DanceTech Protocol — A to Z
+
+**Use this document** to build a landing page (e.g. in Lovable), social copy, or investor one-pagers. It explains the protocol end-to-end and points to the open-source reference app on GitHub.
+
+| | |
+|---|---|
+| **Protocol** | DanceTech Protocol — pattern stack for dance-industry money & ops on **Tempo** + **MPP/x402** |
+| **Reference app** | **DanceTempo** — [`github.com/arunnadarasa/dancetempo`](https://github.com/arunnadarasa/dancetempo) |
+| **Settlement** | [Tempo](https://tempo.xyz) (L1 tuned for payments) |
+| **Machine payments** | [Machine Payments Protocol (MPP)](https://mpp.dev) · [Service catalog](https://mpp.dev/services) |
+
+---
+
+## Elevator pitch
+
+**DanceTech Protocol** is an open **pattern stack** for the dance industry: the same ideas power battle entry fees, coaching minutes, beat licensing, judge scores, cypher pots, clip revenue splits, reputation attestations, studio AI metering, tournament ops automation, fan memberships—and the paid APIs (email, travel, music, intel) that surround real events.
+
+Money and API access are **settled on Tempo** and **authorized through MPP and HTTP 402 (x402)** so flows stay **verifiable**, **composable**, and **agent-ready**: humans, scripts, and services can participate under explicit trust boundaries.
+
+**DanceTempo** is the **reference implementation**: one hub, dedicated demos, and a production-style Node/Express API you can fork.
+
+---
+
+## A — Architecture (four layers)
+
+1. **Experience** — Hub and full-screen apps (battle, coaching, beats, dance-extras, kicks, travel, …).  
+2. **API** — Express routes that encode intents, receipts, and integration behavior.  
+3. **Payments** — `mppx` on client and server; Tempo chain actions via `viem`.  
+4. **Integrations** — Paid third parties (AgentMail, Suno, OpenWeather, KicksDB, …) via MPP catalog hosts or env-configured proxies.
+
+---
+
+## B — Blockchain: why Tempo?
+
+Tempo is used as the **settlement layer**: fast finality, stable-asset patterns, and tooling that fits **machine-readable payments** (MPP) alongside human wallet UX. The protocol is **not** “one smart contract”—it’s **how you wire** industry flows to Tempo’s settlement and receipts.
+
+---
+
+## C — Charges & sessions
+
+Two recurring **payment intents** in the stack:
+
+- **`charge`** — One-shot payment (entry, license, attestation, pass).  
+- **`session`** — Metered or repeated ticks (coaching minutes, micropot-style accumulation).
+
+Both map to MPP semantics and show up across hub copy and `DANCETECH_USE_CASES.md`.
+
+---
+
+## D — DanceTempo (reference implementation)
+
+**DanceTempo** encodes DanceTech Protocol in a real codebase:
+
+- **Frontend:** React, TypeScript, Vite.  
+- **Backend:** Express 5, payment verification, `402` passthrough, proxies.  
+- **Repo:** [`github.com/arunnadarasa/dancetempo`](https://github.com/arunnadarasa/dancetempo) — clone, configure `.env`, run `npm run dev:full`.
+
+---
+
+## E — Ecosystem (mpp.dev)
+
+The **[MPP service catalog](https://mpp.dev/services)** lists hosted integrations (base URLs, paths, pricing). DanceTempo wires many of the same vendors through **`server/index.js`** and documents env vars in **`.env.example`**.
+
+---
+
+## F — Forks & extensibility
+
+The protocol is **meant to be forked**: add a route, add a `src/*App.tsx`, mirror the same **pay → receipt → side effect** pattern. Behavioral contracts live in **`DANCETECH_USE_CASES.md`**.
+
+---
+
+## G — Glossary (money on the internet)
+
+- **x402 / 402** — HTTP *Payment Required*; challenge that `mppx` can solve so a client pays and retries.  
+- **Receipt** — Proof linked to a payment or intent (audit trail for judges, ops, fans).  
+- **TIP-20** — Token patterns on Tempo (e.g. factory demos in-repo).
+
+---
+
+## H — Humans & agents (one protocol)
+
+DanceTech Protocol is **one** stack. “Human→human,” “human→agent,” “agent→human,” and “agent→agent” are **shorthand** for who **authorizes spend** and who **benefits**—not four separate specs.
+
+| Shorthand | Meaning |
+|-----------|--------|
+| Human ↔ human | Wallet commerce (fees, passes, splits). |
+| Human → agent | User approves; orchestrator calls the same HTTP APIs. |
+| Agent → human | Automation delivers email, alerts, passes to people. |
+| Agent ↔ agent | Service-to-service: machine payments, API keys after MPP, webhooks. |
+
+---
+
+## I — Integrations (examples)
+
+Illustrative rails demonstrated or scaffolded: **AgentMail**, **StablePhone**, **StableSocial**, **StableTravel**, **Laso** cards, **Suno**, **Parallel**, **OpenWeather**, **OpenAI MPP**, **KicksDB**, **Google Maps**, **Aviationstack**, **Alchemy**, **Fal**, **Replicate**, **TIP-20** factory—not all required; enable via env.
+
+---
+
+## J — Justice & judging (paid writes)
+
+Judge score submission is modeled as a **paid write API**: accountability and receipts for who scored whom, when—aligned with battle and event timelines.
+
+---
+
+## K — Keys & configuration
+
+Operators use **`.env`**: `MPP_RECIPIENT`, optional vendor keys, AgentMail (`AGENTMAIL_API_KEY`, `AGENTMAIL_INBOX_ID`), OpenAI, KicksDB, etc. **Never commit secrets**; copy from **`.env.example`**.
+
+---
+
+## L — Live vs simulate
+
+Many flows support **simulate** (mock API, no chain spend) and **live** (Tempo MPP with wallet). Example: **`/dance-extras`** → `POST /api/dance-extras/live/:flowKey/:network` after an MPP charge.
+
+---
+
+## M — MPP (Machine Payments Protocol)
+
+MPP standardizes **how** machines and wallets pay for HTTP resources: challenges, retries, receipts. DanceTempo uses **`mppx`** client/server and forwards **402** responses so clients can complete payment.
+
+---
+
+## N — Networks
+
+| Network | Chain ID | Notes |
+|---------|-----------|--------|
+| Tempo testnet (Moderato) | `42431` | Default for safe iteration; pathUSD-style fee patterns. |
+| Tempo mainnet | `4217` | Real value; test thoroughly on testnet first. |
+
+---
+
+## O — Open source
+
+License: **MIT** (see `LICENSE` in the repo). Use commercially; attribute; contribute back if you can.
+
+---
+
+## P — Product surfaces (routes)
+
+Examples users can open in DanceTempo:
+
+| Path | Idea |
+|------|------|
+| `/` | Hub — all use cases |
+| `/battle` | Battle entry + payout |
+| `/coaching` | Coaching minutes |
+| `/beats` | Beat licensing |
+| `/dance-extras` | Seven core DanceTech scaffolds + live MPP |
+| `/kicks`, `/travel`, `/music`, `/email`, … | Vertical demos |
+
+Full table: **`README.md`** in the repo.
+
+---
+
+## Q — Quality & ops
+
+**CLAWHUB.md** in the repo captures **what worked and what failed** (AgentMail inbox scope, stale API processes, 402 loops)—useful for operators and coding agents.
+
+---
+
+## R — Receipts & auditability
+
+Receipts tie **payment** to **business events** (scores, usage ticks, passes, clip sales). That’s the trust layer for organizers, dancers, and partners.
+
+---
+
+## S — Security
+
+- Secrets only in **`.env`**.  
+- **Testnet first** for new flows.  
+- **Mainnet** spends real assets—match recipient config and network selection to your deployment.
+
+---
+
+## T — Tempo (settlement)
+
+Tempo provides the **chain context** for settlement; pair with **explorers** (e.g. testnet/mainnet explorers linked from the app) for transaction hashes.
+
+---
+
+## U — Use cases (ten+)
+
+Battle entry, judge scores, cypher micropot, coaching minutes, beat licensing, clip rights router, reputation attestations, studio AI billing, ops bot + email, fan battle pass—plus integrations above. Details: **`DANCETECH_USE_CASES.md`**.
+
+---
+
+## V — Verifiability
+
+The protocol bias is **prove what happened**: payment proof, API receipt, optional on-chain hash exposure—so disputes and automation have a shared source of truth.
+
+---
+
+## W — Wallets
+
+Users pay with **injected wallets** (e.g. MetaMask, Tempo-capable wallets). Server-side keys handle **delegated** or **post-payment** calls where appropriate (e.g. AgentMail after MPP charge).
+
+---
+
+## X — x402 (HTTP Payment Required)
+
+Third-party APIs may return **402** + **WWW-Authenticate**. The backend **preserves** the challenge for `mppx`; swallowing 402 as a generic error breaks the payment loop.
+
+---
+
+## Y — You (who this is for)
+
+- **Event orgs & platforms** — standardized payment patterns for competitions and community products.  
+- **Builders** — fork DanceTempo, swap branding, connect your keys.  
+- **Agents & automation** — same HTTP contracts; explicit trust for who signs and who pays.
+
+---
+
+## Z — Zero lock-in (philosophy)
+
+The protocol is **patterns + reference code**, not a single vendor gate. Swap integrations via env; replace UIs; keep Tempo + MPP as the spine—or extract the API contract only.
+
+---
+
+## Suggested Lovable CTA block
+
+**Headline:** *DanceTech Protocol — verifiable payments for the dance economy.*
+
+**Sub:** *Built on Tempo & MPP. Ship faster with the open DanceTempo reference app.*
+
+**Primary button:** [View on GitHub](https://github.com/arunnadarasa/dancetempo)
+
+**Secondary:** [Try the docs — README](https://github.com/arunnadarasa/dancetempo/blob/main/README.md)
+
+---
+
+## Files to read next (in repo)
+
+| File | Purpose |
+|------|---------|
+| `README.md` | Overview, routes, quick start |
+| `DANCETECH_USE_CASES.md` | Flow-by-flow API mapping |
+| `CLAWHUB.md` | Operational learnings |
+| `.env.example` | Configuration surface |
+
+---
+
+*This file is maintained for landing-page and handoff use. Protocol naming: **DanceTech Protocol**; implementation: **DanceTempo** · [`github.com/arunnadarasa/dancetempo`](https://github.com/arunnadarasa/dancetempo).*
+
+
+## <<< END FILE: DANCE_TECH_PROTOCOL_AZ.md
+
+
+## >>> BEGIN FILE: docs/PURL_DANCETEMPO.md
+
+# Testing [Stripe `purl`](https://github.com/stripe/purl) with DanceTempo
+
+**See also:** in-app **`/purl`** page — copy-paste `curl` + `purl` wire for **testnet and mainnet** (`judge-score` live routes). In-app showcase for the official [**Tempo Wallet CLI**](https://github.com/tempoxyz/wallet) at **`/tempo-wallet`** — passkey login and `tempo request` for the same MPP patterns.
+
+---
+
+This documents a **local smoke test**: `purl` can **parse** the `402 Payment Required` response from DanceTempo’s live MPP routes and identify **MPP on Tempo testnet** (`eip155:42431`).
+
+## Prerequisites
+
+- **DanceTempo API** running on `http://127.0.0.1:8787` (`npm run server` from repo root).
+- **`purl` CLI** ≥ 0.2.0 (`cargo install --path cli` from [stripe/purl](https://github.com/stripe/purl), or Homebrew `stripe/purl/purl` when the install completes).
+- **`~/.purl/config.toml`** with a **Tempo** wallet (`purl wallet add --type tempo …`). Use a **dedicated test wallet**; do not reuse mainnet keys.
+
+Example (dev-only private key — **never use on mainnet**):
+
+```bash
+mkdir -p ~/.purl
+purl wallet add --type tempo --name dancetempo-dev \
+  -k <YOUR_TESTNET_PRIVATE_KEY_HEX> \
+  -p "<keystore-password>" \
+  --set-active true
+```
+
+## 1) Baseline: `curl` sees `402`
+
+```bash
+curl -s -w "\nHTTP:%{http_code}\n" -X POST \
+  http://127.0.0.1:8787/api/dance-extras/live/judge-score/testnet \
+  -H "Content-Type: application/json" \
+  -d '{"network":"testnet","battleId":"b","roundId":"r","judgeId":"j","dancerId":"d","score":9}'
+```
+
+Expect **`HTTP:402`** and JSON with `type` / `challengeId` (x402 / paymentauth problem shape).
+
+## 2) `purl --dry-run` (recommended first `purl` test)
+
+`purl` parses the challenge and prints what it **would** pay, without sending a transaction:
+
+```bash
+BODY='{"network":"testnet","battleId":"b","roundId":"r","judgeId":"j","dancerId":"d","score":9}'
+purl --dry-run -v -X POST --json "$BODY" \
+  "http://127.0.0.1:8787/api/dance-extras/live/judge-score/testnet"
+```
+
+**Observed (successful parse):**
+
+- `402 status: payment required`
+- `Detected protocol: mpp`
+- `Network: eip155:42431`
+- `Amount: 0.01 pathUSD`
+- `Method: tempo`
+
+Exit code may be **non-zero** even on success (`Error: Dry run completed`) — treat output as the source of truth.
+
+## 3) `purl inspect`
+
+`purl inspect <URL>` issues a **GET** by default. DanceTempo’s live route is **POST-only**, so **GET returns `404`**, and `purl` reports “No payment required.” Use **`--dry-run` with `-X POST --json`** for this API instead of `inspect`, unless you add a GET probe route.
+
+## 4) Real payment (optional)
+
+Omit `--dry-run` to attempt an on-chain pay (requires **funded Tempo testnet** balance for the wallet, and valid `MPP_RECIPIENT` / server MPP config):
+
+```bash
+purl -X POST --json "$BODY" \
+  "http://127.0.0.1:8787/api/dance-extras/live/judge-score/testnet"
+```
+
+Use **`--confirm`** if you want an extra prompt.
+
+## Summary
+
+| Tool | Result with DanceTempo live route |
+|------|-----------------------------------|
+| `curl` | `402` + JSON challenge body |
+| `purl --dry-run` + POST JSON | Recognizes **MPP**, **Tempo** (`eip155:42431`), **pathUSD** amount |
+| `purl inspect` (GET) | **404** on POST-only route — not applicable without a GET handler |
+
+**Conclusion:** `purl` is **compatible at the payment-requirement layer** with DanceTempo’s MPP/402 responses on Tempo testnet. For automation, prefer **`purl --dry-run`** or a funded **`purl`** wallet on **testnet** before any mainnet use.
+
+---
+
+## Mainnet wire (same pattern, **real value**)
+
+Use path suffix **`mainnet`** and JSON with `"network":"mainnet"`. **Only** after testnet dry-run succeeds and you intend to spend on chain **4217**.
+
+```bash
+curl -s -w "\nHTTP:%{http_code}\n" -X POST \
+  http://127.0.0.1:8787/api/dance-extras/live/judge-score/mainnet \
+  -H "Content-Type: application/json" \
+  -d '{"network":"mainnet","battleId":"b","roundId":"r","judgeId":"j","dancerId":"d","score":9}'
+```
+
+```bash
+BODY='{"network":"mainnet","battleId":"b","roundId":"r","judgeId":"j","dancerId":"d","score":9}'
+purl --dry-run -v -X POST --json "$BODY" \
+  "http://127.0.0.1:8787/api/dance-extras/live/judge-score/mainnet"
+```
+
+Your purl wallet must be funded on **Tempo mainnet**; verify `MPP_RECIPIENT` and server MPP config before omitting `--dry-run`.
+
+
+## <<< END FILE: docs/PURL_DANCETEMPO.md
+
+
+## >>> BEGIN FILE: docs/TEMPO_WALLET_TEST.md
+
+# Verifying Tempo Wallet CLI + DanceTempo (local)
+
+Last verified with **Tempo CLI v1.4.3** and DanceTempo `server/index.js` on `http://127.0.0.1:8787`.
+
+## 1) API returns `402` (no wallet)
+
+```bash
+curl -s -w "\nHTTP:%{http_code}\n" -X POST \
+  "http://127.0.0.1:8787/api/dance-extras/live/judge-score/testnet" \
+  -H "Content-Type: application/json" \
+  -d '{"network":"testnet","battleId":"battle_demo","roundId":"round_1","judgeId":"judge_1","dancerId":"dancer_1","score":8.7}'
+```
+
+**Expected:** `HTTP:402` and JSON with `"title":"Payment Required"`, `challengeId`, etc.
+
+## 2) Install `tempo` (official installer)
+
+```bash
+curl -fsSL https://tempo.xyz/install | bash
+source ~/.tempo/env   # or restart shell
+tempo --version
+```
+
+## 3) `tempo request --dry-run` **before** `tempo wallet login`
+
+```bash
+BODY='{"network":"testnet","battleId":"battle_demo","roundId":"round_1","judgeId":"judge_1","dancerId":"dancer_1","score":8.7}'
+tempo request --dry-run -X POST --json "$BODY" \
+  "http://127.0.0.1:8787/api/dance-extras/live/judge-score/testnet"
+```
+
+**Observed (expected):**
+
+```text
+code: E_USAGE
+message: "Configuration missing: No key configured for network 'tempo-moderato'."
+```
+
+The CLI correctly associates the challenge with **Tempo Moderato (testnet)** but cannot sign until you configure a key via **`tempo wallet login`** (passkey flow).
+
+## 4) After passkey login + fund (manual)
+
+1. `tempo wallet login` — complete browser passkey at `wallet.tempo.xyz`.
+2. `tempo wallet whoami`
+3. `tempo wallet fund` (testnet) as needed.
+4. Re-run the **`tempo request --dry-run`** command from §3.
+
+You should see payment preview (amount, asset, recipient) similar to **`purl --dry-run`** / browser `mppx`, without the `E_USAGE` error.
+
+## Summary
+
+| Step | Result |
+|------|--------|
+| `curl` POST | `402` + payment challenge ✓ |
+| `tempo request` without session | Clear error: need key for `tempo-moderato` ✓ |
+| `tempo request` after login | User completes dry-run / pay (not automated in CI) |
+
+This proves **DanceTempo’s MPP endpoint is compatible with the official Tempo Wallet’s network selection**; the remaining step is **human passkey login**, not a protocol mismatch.
+
+
+## <<< END FILE: docs/TEMPO_WALLET_TEST.md
