@@ -20,7 +20,7 @@ Cross-check with **`CLAWHUB.md`** for project-specific history.
 ## `purl inspect` / GET on POST-only routes
 
 - **Cause:** **`purl inspect`** defaults to GET; many live routes are POST-only.
-- **Fix:** Use **`purl --dry-run -X POST`** (see **`docs/PURL_DANCETEMPO.md`**).
+- **Fix:** Use **`purl --dry-run -X POST`** (see **`docs/PURL_CLINICAL_TEMPO.md`**).
 
 ## Documentation drift
 

@@ -5,11 +5,11 @@
 set -e
 
 cat << 'EOF'
-<dancetempo-clawhub-reminder>
-Before closing this task on Clinical Tempo (dancetempo):
+<clinicaltempo-clawhub-reminder>
+Before closing this task on Clinical Tempo:
 - If you changed docs that feed the bundle: run `npm run build:llm` and verify `public/llm-full.txt`.
 - If you debugged MPP/402/8787: add a one-line Success or Failure to `CLAWHUB.md` (no secrets).
 - API smoke: `GET http://localhost:8787/api/dance-extras/live` → JSON `flowKeys` when server is up.
 - Full orientation: `@` `public/llm-full.txt`; tribal notes: `CLAWHUB.md`.
-</dancetempo-clawhub-reminder>
+</clinicaltempo-clawhub-reminder>
 EOF

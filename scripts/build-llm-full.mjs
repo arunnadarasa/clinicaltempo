@@ -15,7 +15,7 @@ const FILES = [
   ['CLAWHUB.md', 'CLAWHUB.md'],
   ['HEALTHTECH_USE_CASES.md', 'HEALTHTECH_USE_CASES.md'],
   ['HEALTH_TECH_PROTOCOL_AZ.md', 'HEALTH_TECH_PROTOCOL_AZ.md'],
-  ['docs/PURL_DANCETEMPO.md', 'docs/PURL_DANCETEMPO.md'],
+  ['docs/PURL_CLINICAL_TEMPO.md', 'docs/PURL_CLINICAL_TEMPO.md'],
   ['docs/PURL_NHS.md', 'docs/PURL_NHS.md'],
   ['docs/OWS_NHS.md', 'docs/OWS_NHS.md'],
   ['docs/TEMPO_WALLET_TEST.md', 'docs/TEMPO_WALLET_TEST.md'],

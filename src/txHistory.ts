@@ -9,7 +9,7 @@ export type TxHistoryItem = {
   createdAt: string
 }
 
-const STORAGE_KEY = 'dancetech_tx_history_v1'
+const STORAGE_KEY = 'clinical_tempo_tx_history_v1'
 
 const safeParse = (raw: string | null): TxHistoryItem[] => {
   if (!raw) return []

@@ -39,7 +39,7 @@ purl -X POST https://climate.stripe.dev/api/contribute \
 
 Then point `purl` at **this repo’s** MPP-gated NHS API (local):
 
-- See [`docs/PURL_DANCETEMPO.md`](./PURL_DANCETEMPO.md) for `purl --dry-run -X POST` to `http://127.0.0.1:8787/api/nhs/...` on Tempo testnet.
+- See [`docs/PURL_CLINICAL_TEMPO.md`](./PURL_CLINICAL_TEMPO.md) for `purl --dry-run -X POST` to `http://127.0.0.1:8787/api/nhs/...` on Tempo testnet.
 
 ## Official purl.dev smoke tests (Stripe-hosted)
 
@@ -59,4 +59,4 @@ These URLs are **not** your Tempo NHS server — they are the simplest free vs p
 ## Relationship to Clinical Tempo
 
 - **Tempo MPP** powers **`/api/nhs/*`** when the payment gate is on (`NHS_ENABLE_PAYMENT_GATE` not `false`).
-- Use **`purl balance`** + **Tempo** wallet to align CLI state with hackathon wallets; use **`docs/PURL_DANCETEMPO.md`** for local dry-runs and live POSTs.
+- Use **`purl balance`** + **Tempo** wallet to align CLI state with hackathon wallets; use **`docs/PURL_CLINICAL_TEMPO.md`** for local dry-runs and live POSTs.

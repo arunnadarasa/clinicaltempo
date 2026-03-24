@@ -51,7 +51,7 @@ export default function NhsPurlApp() {
     <NhsShell
       title="Stripe purl — NHS hackathon use case"
       subtitle={
-        'purl supports Tempo and MPP (plus x402). Use balance + paid HTTP examples here, purl.dev smoke tests below, then local NHS MPP routes per docs/PURL_DANCETEMPO.md.'
+        'purl supports Tempo and MPP (plus x402). Use balance + paid HTTP examples here, purl.dev smoke tests below, then local NHS MPP routes per docs/PURL_CLINICAL_TEMPO.md.'
       }
     >
       {() => (
@@ -90,7 +90,7 @@ export default function NhsPurlApp() {
             </p>
             <DocCodeBlock label="bash" code={tempoPaidPost} />
             <p className="intent">
-              NHS APIs in this repo: after <code>purl</code> works with Tempo, use <code>docs/PURL_DANCETEMPO.md</code> for{' '}
+              NHS APIs in this repo: after <code>purl</code> works with Tempo, use <code>docs/PURL_CLINICAL_TEMPO.md</code> for{' '}
               <code>purl --dry-run -X POST</code> against <code>http://127.0.0.1:8787/api/nhs/...</code> with MPP.
             </p>
           </article>
@@ -116,7 +116,7 @@ export default function NhsPurlApp() {
             <h3 style={{ marginTop: '0.85rem', fontSize: '1.05rem' }}>Clinical Tempo API — judge score (local server)</h3>
             <p>
               Requires <code>npm run server</code> on <code>127.0.0.1:8787</code> and <code>MPP_RECIPIENT</code> / MPP config.
-              See <code>docs/PURL_DANCETEMPO.md</code> §4.
+              See <code>docs/PURL_CLINICAL_TEMPO.md</code> §4.
             </p>
             <p className="intent">
               <strong>Testnet (42431)</strong>
@@ -153,7 +153,7 @@ export default function NhsPurlApp() {
             <h2>Wallet setup</h2>
             <p>
               Required before paid calls. For <strong>Tempo</strong>, use a Tempo keystore in <code>purl</code> (see{' '}
-              <code>docs/PURL_DANCETEMPO.md</code> for <code>purl wallet add --type tempo</code>).
+              <code>docs/PURL_CLINICAL_TEMPO.md</code> for <code>purl wallet add --type tempo</code>).
             </p>
             <DocCodeBlock label="bash" code={walletAdd} />
           </article>
@@ -191,11 +191,11 @@ export default function NhsPurlApp() {
             <h2>Next: this repo’s NHS API</h2>
             <p>
               In-browser flows use MetaMask (etc.); <code>purl</code> is for CLI/agents. NHS routes use <strong>Tempo MPP</strong>{' '}
-              on <code>localhost:8787</code>. Follow <code>docs/PURL_DANCETEMPO.md</code> for <code>purl --dry-run</code> and
+              on <code>localhost:8787</code>. Follow <code>docs/PURL_CLINICAL_TEMPO.md</code> for <code>purl --dry-run</code> and
               live POSTs to <code>/api/nhs/*</code> on <strong>Tempo testnet</strong>.
             </p>
             <p className="intent">
-              Long-form: <code>docs/PURL_NHS.md</code> and <code>docs/PURL_DANCETEMPO.md</code>.
+              Long-form: <code>docs/PURL_NHS.md</code> and <code>docs/PURL_CLINICAL_TEMPO.md</code>.
             </p>
           </article>
         </section>

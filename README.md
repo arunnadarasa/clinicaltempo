@@ -4,7 +4,7 @@
 
 **Clinical Tempo** is the **reference implementation**: a single hub, dedicated full-screen flows, and a Node/Express API that encodes the protocol in production-style code. Fork it to ship your own product; treat [`HEALTHTECH_USE_CASES.md`](./HEALTHTECH_USE_CASES.md) as the behavioral contract.
 
-**This repository is [arunnadarasa/clinicaltempo](https://github.com/arunnadarasa/clinicaltempo)** — the **canonical** remote for contributors (`git clone`, `git pull`, `git push`). An optional sibling mirror may exist at **[arunnadarasa/dancetempo](https://github.com/arunnadarasa/dancetempo)**; do not assume it tracks every commit. **NHS / hackathon notes:** [`OPENCLAW_CLINICAL_HACKATHON_LEARNINGS.md`](./OPENCLAW_CLINICAL_HACKATHON_LEARNINGS.md). **Data safety:** use **dummy or synthetic** patient data in demos only — never real patient-identifiable data.
+**This repository is [arunnadarasa/clinicaltempo](https://github.com/arunnadarasa/clinicaltempo)** — use it for **`git clone`**, **`git pull`**, and **`git push`**. **NHS / hackathon notes:** [`OPENCLAW_CLINICAL_HACKATHON_LEARNINGS.md`](./OPENCLAW_CLINICAL_HACKATHON_LEARNINGS.md). **Data safety:** use **dummy or synthetic** patient data in demos only — never real patient-identifiable data.
 
 ### Interaction modes (humans & agents)—one protocol, not four
 
@@ -17,7 +17,7 @@ HealthTech Protocol is **one** stack (Tempo settlement + MPP/x402 authorization)
 | **Agent → human** | Automated action delivers something to a person (email, alert, receipt, pass). | Ops bot + AgentMail, notifications; fulfillment after payment—not a second payment “protocol.” |
 | **Agent → agent** | Service-to-service: backends, cron, or **machine payments** between APIs. | `402` + `mppx` on the server, **API keys** where allowed (e.g. AgentMail after MPP), webhooks, `POST /api/*` from trusted workers. |
 
-**Roles (mental model):** **Payer** (human wallet vs server treasury vs delegated agent), **beneficiary** (human vs org vs system), **channel** (browser vs server). Ambient agents (e.g. coding assistants) consume **skills** like [`CLAWHUB.md`](./CLAWHUB.md), the **[ClawHub](https://clawhub.ai/)**-published skill (search **clinicaltempo** or **dancetempo** on the site — same bundled **`SKILL.md`**), and repo **[`.cursor/skills/clawhub/`](./.cursor/skills/clawhub/README.md)**; runtime agents should call the **same** Express contracts with explicit trust boundaries.
+**Roles (mental model):** **Payer** (human wallet vs server treasury vs delegated agent), **beneficiary** (human vs org vs system), **channel** (browser vs server). Ambient agents (e.g. coding assistants) consume **skills** like [`CLAWHUB.md`](./CLAWHUB.md), the **[ClawHub](https://clawhub.ai/)** skill for **Clinical Tempo** (search **clinicaltempo**), and repo **[`.cursor/skills/clawhub/`](./.cursor/skills/clawhub/README.md)**; runtime agents should call the **same** Express contracts with explicit trust boundaries.
 
 ---
 
@@ -40,13 +40,13 @@ HealthTech Protocol is **one** stack (Tempo settlement + MPP/x402 authorization)
 - **Backend:** Node.js, Express 5  
 - **Docs in repo:** [`HEALTHTECH_USE_CASES.md`](./HEALTHTECH_USE_CASES.md) — flows, endpoints, testing notes  
 - **Landing / Lovable handoff:** [`HEALTH_TECH_PROTOCOL_AZ.md`](./HEALTH_TECH_PROTOCOL_AZ.md) — A–Z narrative + GitHub links for marketing sites  
-- **Stripe `purl` CLI:** route **`/purl`** — copy-paste `curl` + `purl` for **testnet + mainnet**; long-form [`docs/PURL_DANCETEMPO.md`](./docs/PURL_DANCETEMPO.md)  
+- **Stripe `purl` CLI:** route **`/purl`** — copy-paste `curl` + `purl` for **testnet + mainnet**; long-form [`docs/PURL_CLINICAL_TEMPO.md`](./docs/PURL_CLINICAL_TEMPO.md)  
 - **EVVM:** optional **`npm run evvm:vendor`** (full upstream clone + `./evvm install`); Solidity library: **`npm install @evvm/testnet-contracts`** when you need imports; route **`/evvm`** — deploy on **Tempo testnet only**; long-form [`docs/EVVM_TEMPO.md`](./docs/EVVM_TEMPO.md) (skip global registry until EVVM lists Tempo)  
 - **Tempo Wallet CLI (official):** route **`/tempo-wallet`** — in-app showcase + copy-paste for [`tempoxyz/wallet`](https://github.com/tempoxyz/wallet); verification log [`docs/TEMPO_WALLET_TEST.md`](./docs/TEMPO_WALLET_TEST.md)  
 - **Agent / tribal knowledge:** [`CLAWHUB.md`](./CLAWHUB.md) — successes, failures, debugging checklists  
 - **MPPScan / AgentCash discovery:** **`GET /openapi.json`** — OpenAPI 3.1 for agents; validate with **`npm run discovery`** (requires **`npm run server`**). Long-form [`docs/MPPSCAN_DISCOVERY.md`](./docs/MPPSCAN_DISCOVERY.md)  
 - **LLM context bundle (single file):** [`public/llm-full.txt`](./public/llm-full.txt) — concatenated README + use cases + ClawHub + protocol docs; **regenerate** with `npm run build:llm`. **Download** from the running app at **`/llm-full.txt`** (hub button: “Download LLM context bundle”) or from GitHub raw after push.
-- **GitHub Copilot:** [`.github/copilot-instructions.md`](./.github/copilot-instructions.md) — short project hints. **Published ClawHub skill:** **[clawhub.ai/arunnadarasa/dancetempo](https://clawhub.ai/arunnadarasa/dancetempo)** — **[ClawHub](https://clawhub.ai/)** versioned skill dock; mirrors repo **`.cursor/skills/clawhub/`** with the same **package rigor** as [self-improving-agent](https://clawhub.ai/pskoett/self-improving-agent): **`SKILL.md`**, **`references/`** (incl. **`openclaw-integration.md`**, **`hooks-setup.md`**), **`assets/`** (templates, optional **`learnings/`** stubs), **`scripts/`** (`verify-dancetempo-context.sh`, **`activator.sh`**, **`error-detector.sh`**, **`extract-skill.sh`**), optional **`hooks/openclaw/`** (**`dancetempo-clawhub`**), **`_meta.sample.json`**. Install: `npx clawhub@latest install arunnadarasa/dancetempo` (or site UI). Zip the folder to publish updates. **OpenClaw (optional):** `openclaw plugins install @anyway-sh/anyway-openclaw` — pair with the skill + **`references/openclaw-dancetempo.md`**.
+- **GitHub Copilot:** [`.github/copilot-instructions.md`](./.github/copilot-instructions.md) — short project hints. **Published ClawHub skill:** **[clawhub.ai/arunnadarasa/clinicaltempo](https://clawhub.ai/arunnadarasa/clinicaltempo)** — **[ClawHub](https://clawhub.ai/)** versioned skill dock; mirrors repo **`.cursor/skills/clawhub/`** with the same **package rigor** as [self-improving-agent](https://clawhub.ai/pskoett/self-improving-agent): **`SKILL.md`**, **`references/`** (incl. **`openclaw-integration.md`**, **`hooks-setup.md`**), **`assets/`** (templates, optional **`learnings/`** stubs), **`scripts/`** (`verify-clinical-tempo-context.sh`, **`activator.sh`**, **`error-detector.sh`**, **`extract-skill.sh`**), optional **`hooks/openclaw/`** (**`clinicaltempo-clawhub`**), **`_meta.sample.json`**. Install: `npx clawhub@latest install arunnadarasa/clinicaltempo` (or site UI). Zip the folder to publish updates. **OpenClaw (optional):** `openclaw plugins install @anyway-sh/anyway-openclaw` — pair with the skill + **`references/openclaw-clinical-tempo.md`**.
 
 ### Local dev (Vite + API)
 
@@ -110,7 +110,7 @@ The **[Machine Payments Protocol service catalog](https://mpp.dev/services)** li
 
 ### Clinical Tempo (NHS UI)
 
-When this repo is run as the **neighbourhood health** front end, dedicated routes live under **`/nhs/*`** (hub, GP access, care plans, transactions, etc.). For **Stripe [purl](https://www.purl.dev/)** — official **free** (`/test/free`) and **paid** (`/test/paid`, 0.01 USDC) CLI demos — open **`/nhs/purl`** or read **`docs/PURL_NHS.md`**. For **Open Wallet Standard** — install **`ows`** via **[docs.openwallet.sh/install.sh](https://docs.openwallet.sh/install.sh)** — see **`/nhs/ows`** and **`docs/OWS_NHS.md`**. For **Tempo** `purl` against local MPP APIs, keep using **`docs/PURL_DANCETEMPO.md`**. OpenClaw hackathon learnings (workflows, pitfalls): [`OPENCLAW_CLINICAL_HACKATHON_LEARNINGS.md`](./OPENCLAW_CLINICAL_HACKATHON_LEARNINGS.md).
+When this repo is run as the **neighbourhood health** front end, dedicated routes live under **`/nhs/*`** (hub, GP access, care plans, transactions, etc.). For **Stripe [purl](https://www.purl.dev/)** — official **free** (`/test/free`) and **paid** (`/test/paid`, 0.01 USDC) CLI demos — open **`/nhs/purl`** or read **`docs/PURL_NHS.md`**. For **Open Wallet Standard** — install **`ows`** via **[docs.openwallet.sh/install.sh](https://docs.openwallet.sh/install.sh)** — see **`/nhs/ows`** and **`docs/OWS_NHS.md`**. For **Tempo** `purl` against local MPP APIs, keep using **`docs/PURL_CLINICAL_TEMPO.md`**. OpenClaw hackathon learnings (workflows, pitfalls): [`OPENCLAW_CLINICAL_HACKATHON_LEARNINGS.md`](./OPENCLAW_CLINICAL_HACKATHON_LEARNINGS.md).
 
 ---
 
@@ -191,7 +191,7 @@ See `.env.example` for the full list and placeholders.
 | [`CLAWHUB.md`](./CLAWHUB.md) | Tribal debugging — what worked / failed |
 | [`.github/copilot-instructions.md`](./.github/copilot-instructions.md) | Hints for GitHub Copilot |
 | **ClawHub skill** | Bundled as **`.cursor/skills/clawhub/`** — install from [ClawHub](https://clawhub.ai/) (search **clinicaltempo**); manifest: **[`.cursor/skills/clawhub/README.md`](./.cursor/skills/clawhub/README.md)** |
-| **OpenClaw Anyway plugin (optional)** | `openclaw plugins install @anyway-sh/anyway-openclaw` — extra runtime tools; pair with the skill · **`.cursor/skills/clawhub/references/openclaw-dancetempo.md`** |
+| **OpenClaw Anyway plugin (optional)** | `openclaw plugins install @anyway-sh/anyway-openclaw` — extra runtime tools; pair with the skill · **`.cursor/skills/clawhub/references/openclaw-clinical-tempo.md`** |
 | EVVM upstream | [`https://www.evvm.info/llms-full.txt`](https://www.evvm.info/llms-full.txt) (not vendored; attach when doing deep EVVM work) |
 | **MPPScan discovery** | **`GET /openapi.json`** on the API (OpenAPI 3.1 + `x-payment-info` for live MPP routes). Validate: **`npm run discovery`** (server on **8787**). Guide: [`docs/MPPSCAN_DISCOVERY.md`](./docs/MPPSCAN_DISCOVERY.md) · [mppscan.com/discovery](https://www.mppscan.com/discovery) |
 | **Ecosystem synergy** | [docs/ECOSYSTEM_SYNERGY.md](./docs/ECOSYSTEM_SYNERGY.md) — MPP + Tempo vs **mpp-nanogpt-modal**; nanoGPT / nanochat / autoresearch vs Clinical Tempo; OpenClaw skill + plugins |

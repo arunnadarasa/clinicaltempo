@@ -34,8 +34,8 @@ done
 
 if [ "$contains_error" = true ]; then
     cat << 'EOF'
-<dancetempo-error-detected>
+<clinical-tempo-error-detected>
 Output may indicate a failure. If this was non-obvious, add a **Failures** subsection to `CLAWHUB.md` (symptom / cause / fix). For stale Express routes, restart `npm run server` and check `GET http://localhost:8787/api/dance-extras/live`.
-</dancetempo-error-detected>
+</clinical-tempo-error-detected>
 EOF
 fi

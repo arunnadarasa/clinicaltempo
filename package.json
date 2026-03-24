@@ -1,6 +1,6 @@
 {
-  "name": "dancetempo",
-  "description": "Clinical Tempo — HealthTech Protocol reference on Tempo + MPP (NHS neighbourhood care UI, dance-extras, integrations)",
+  "name": "clinicaltempo",
+  "description": "Clinical Tempo — HealthTech Protocol reference on Tempo + MPP (NHS neighbourhood care UI, hub integrations, live payment demos)",
   "private": true,
   "version": "0.0.0",
   "type": "module",

@@ -4,19 +4,19 @@ This reference aligns **OpenClaw** workspace usage with the **Clinical Tempo** r
 
 ## Optional: bootstrap hook
 
-Injects a **virtual** file **`DANCETEMPO_CONTEXT_REMINDER.md`** on **`agent:bootstrap`** so every session sees pointers to **`public/llm-full.txt`**, **`CLAWHUB.md`**, and **`GET /api/dance-extras/live`**. Sub-agent sessions are skipped.
+Injects a **virtual** file **`CLINICAL_TEMPO_CONTEXT_REMINDER.md`** on **`agent:bootstrap`** so every session sees pointers to **`public/llm-full.txt`**, **`CLAWHUB.md`**, and **`GET /api/dance-extras/live`**. Sub-agent sessions are skipped.
 
 **Install** (from this skill directory):
 
 ```bash
-cp -r hooks/openclaw ~/.openclaw/hooks/dancetempo-clawhub
-openclaw hooks enable dancetempo-clawhub
+cp -r hooks/openclaw ~/.openclaw/hooks/clinicaltempo-clawhub
+openclaw hooks enable clinicaltempo-clawhub
 ```
 
 **Disable:**
 
 ```bash
-openclaw hooks disable dancetempo-clawhub
+openclaw hooks disable clinicaltempo-clawhub
 ```
 
 **Files:** `hooks/openclaw/HOOK.md`, `handler.js`, `handler.ts`.
@@ -69,7 +69,7 @@ Add to workspace **`AGENTS.md`** or session bootstrap if you **do not** use the 
 Copy this skill for offline use:
 
 ```bash
-cp -r /path/to/dancetempo/.cursor/skills/clawhub ~/.openclaw/skills/dancetempo-clawhub
+cp -r /path/to/clinicaltempo/.cursor/skills/clawhub ~/.openclaw/skills/clinicaltempo-clawhub
 ```
 
 Skill entry remains **`SKILL.md`** inside that folder.

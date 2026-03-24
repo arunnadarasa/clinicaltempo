@@ -80,7 +80,7 @@ metadata: {}
 
 ## Naming
 
-- **Slug:** lowercase, hyphens (`dancetempo-clawhub`, `api-timeout-patterns`)
+- **Slug:** lowercase, hyphens (`clinicaltempo-clawhub`, `api-timeout-patterns`)
 - **Description:** lead with triggers (“Use when: (1) … (2) …”)
 
 ---

@@ -26,7 +26,7 @@ When the skill lives at **`.cursor/skills/clawhub/`**:
 
 ## Claude Code — project-level
 
-Create **`.claude/settings.json`** in the **dancetempo** repo root:
+Create **`.claude/settings.json`** in the **clinicaltempo** repo root:
 
 ```json
 {
@@ -77,7 +77,7 @@ Cursor does not use this `settings.json` hook system by default. **Rely on** the
 
 ## OpenClaw
 
-Use **`hooks/openclaw/`** in this skill (`dancetempo-clawhub` bootstrap) — see **`references/openclaw-integration.md`**.
+Use **`hooks/openclaw/`** in this skill (`clinicaltempo-clawhub` bootstrap) — see **`references/openclaw-integration.md`**.
 
 ---
 

@@ -28,7 +28,7 @@ Same **agent + money + automation** arc, **different layer**: research stacks op
 
 ## OpenClaw: context + automation + plugins
 
-- **[ClawHub skill](https://clawhub.ai/arunnadarasa/dancetempo)** (this repo’s **`.cursor/skills/clawhub/`**) — *what to read* (`llm-full.txt`, `CLAWHUB.md`, smoke tests, MPPScan/OpenAPI).
+- **[ClawHub skill](https://clawhub.ai/arunnadarasa/clinicaltempo)** (this repo’s **`.cursor/skills/clawhub/`**) — *what to read* (`llm-full.txt`, `CLAWHUB.md`, smoke tests, MPPScan/OpenAPI).
 - **Clawflows-style automation** (multi-step OpenClaw flows) — *how* agents run long jobs across skills.
 - **OpenClaw plugins** (e.g. **`@anyway-sh/anyway-openclaw`**) — *extra gateway capabilities* alongside core OpenClaw.
 
@@ -40,4 +40,4 @@ Same **agent + money + automation** arc, **different layer**: research stacks op
 
 - [MPPScan discovery](./MPPSCAN_DISCOVERY.md) — `GET /openapi.json`
 - [EVVM on Tempo](./EVVM_TEMPO.md)
-- [ClawHub + OpenClaw](../.cursor/skills/clawhub/references/openclaw-dancetempo.md)
+- [ClawHub + OpenClaw](../.cursor/skills/clawhub/references/openclaw-clinical-tempo.md)

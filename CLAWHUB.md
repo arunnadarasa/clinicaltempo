@@ -4,11 +4,11 @@
 
 For **full-repo orientation** in one paste (ChatGPT, Claude, Cursor, OpenClaw): use **`public/llm-full.txt`**, built from README + this file + `HEALTHTECH_USE_CASES.md` + `HEALTH_TECH_PROTOCOL_AZ.md` + purl/tempo wallet + **`docs/EVVM_TEMPO.md`** + **`docs/MPPSCAN_DISCOVERY.md`**.
 
-**Published skill (ClawHub):** [clawhub.ai/arunnadarasa/dancetempo](https://clawhub.ai/arunnadarasa/dancetempo) — install the Clinical Tempo skill for IDE/OpenClaw; source of truth remains **`.cursor/skills/clawhub/`** in git. **OpenClaw (optional):** `openclaw plugins install @anyway-sh/anyway-openclaw` — documented in **`references/openclaw-dancetempo.md`**. **Ecosystem framing:** **`docs/ECOSYSTEM_SYNERGY.md`** (mpp-nanogpt-modal, nanoGPT/nanochat/autoresearch, ClawHub + plugins).
+**Published skill (ClawHub):** [clawhub.ai/arunnadarasa/clinicaltempo](https://clawhub.ai/arunnadarasa/clinicaltempo) — install the Clinical Tempo skill for IDE/OpenClaw; source of truth remains **`.cursor/skills/clawhub/`** in git. **OpenClaw (optional):** `openclaw plugins install @anyway-sh/anyway-openclaw` — documented in **`references/openclaw-clinical-tempo.md`**. **Ecosystem framing:** **`docs/ECOSYSTEM_SYNERGY.md`** (mpp-nanogpt-modal, nanoGPT/nanochat/autoresearch, ClawHub + plugins).
 
 - **Regenerate:** `npm run build:llm` (runs automatically before `npm run build`).
 - **In the browser:** open **`/llm-full.txt`** or use the hub **“Download LLM context bundle”** button on `/`.
-- **In GitHub (raw `llm-full.txt`):** [clinicaltempo](https://raw.githubusercontent.com/arunnadarasa/clinicaltempo/main/public/llm-full.txt) or [dancetempo](https://raw.githubusercontent.com/arunnadarasa/dancetempo/main/public/llm-full.txt) — same file when both remotes are in sync.
+- **In GitHub (raw `llm-full.txt`):** `https://raw.githubusercontent.com/arunnadarasa/clinicaltempo/main/public/llm-full.txt`
 
 Keep **this file (`CLAWHUB.md`)** for debugging checklists and failures; pair it with `llm-full.txt` when an agent needs both product context and tribal knowledge. For **EVVM** depth beyond `docs/EVVM_TEMPO.md`, use upstream **`https://www.evvm.info/llms-full.txt`** (EVVM’s bundle; not vendored here).
 
@@ -46,7 +46,7 @@ Core docs to reuse:
 
 1. **Stripe `purl` + Clinical Tempo `402` (MPP on Tempo testnet)**  
    - With a **Tempo** keystore (`purl wallet add --type tempo`), `purl --dry-run -X POST --json '…' http://127.0.0.1:8787/api/dance-extras/live/judge-score/testnet` correctly detects **402**, protocol **mpp**, network **eip155:42431**, **0.01 pathUSD**.  
-   - `purl inspect` uses **GET**; POST-only routes return 404 — use **dry-run + POST** for dance-extras live. See **`docs/PURL_DANCETEMPO.md`**.
+   - `purl inspect` uses **GET**; POST-only routes return 404 — use **dry-run + POST** for dance-extras live. See **`docs/PURL_CLINICAL_TEMPO.md`**.
 
 2. **Superapp README now reflects the real architecture**
    - Added a “super app” definition that maps: hub vs dedicated routes vs backend vs integrations.

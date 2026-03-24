@@ -9,7 +9,7 @@ import type { HookHandler } from 'openclaw/hooks';
 
 const REMINDER_CONTENT = `## Clinical Tempo context (ClawHub skill)
 
-**Published skill:** https://clawhub.ai/arunnadarasa/dancetempo
+**Published skill:** https://clawhub.ai/arunnadarasa/clinicaltempo
 
 **OpenClaw (optional):** \`openclaw plugins install @anyway-sh/anyway-openclaw\`
 
@@ -49,7 +49,7 @@ const handler: HookHandler = async (event) => {
 
   if (Array.isArray(event.context.bootstrapFiles)) {
     event.context.bootstrapFiles.push({
-      path: 'DANCETEMPO_CONTEXT_REMINDER.md',
+      path: 'CLINICAL_TEMPO_CONTEXT_REMINDER.md',
       content: REMINDER_CONTENT,
       virtual: true,
     });

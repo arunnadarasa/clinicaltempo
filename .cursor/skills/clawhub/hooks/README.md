@@ -6,15 +6,15 @@ This folder mirrors the layout used by [self-improving-agent](https://clawhub.ai
 
 | Path | Purpose |
 | --- | --- |
-| **`openclaw/HOOK.md`** | Hook manifest (`name: dancetempo-clawhub`, events, enable commands) |
-| **`openclaw/handler.js`** | CommonJS handler — injects virtual `DANCETEMPO_CONTEXT_REMINDER.md` |
+| **`openclaw/HOOK.md`** | Hook manifest (`name: clinicaltempo-clawhub`, events, enable commands) |
+| **`openclaw/handler.js`** | CommonJS handler — injects virtual `CLINICAL_TEMPO_CONTEXT_REMINDER.md` |
 | **`openclaw/handler.ts`** | TypeScript handler (same behavior; OpenClaw supplies `openclaw/hooks` types) |
 
 ## Install
 
 ```bash
-cp -r hooks/openclaw ~/.openclaw/hooks/dancetempo-clawhub
-openclaw hooks enable dancetempo-clawhub
+cp -r hooks/openclaw ~/.openclaw/hooks/clinicaltempo-clawhub
+openclaw hooks enable clinicaltempo-clawhub
 ```
 
 See **`openclaw/HOOK.md`** for disable and behavior details.

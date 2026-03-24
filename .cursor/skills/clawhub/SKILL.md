@@ -31,7 +31,7 @@ metadata: {}
 | **Changed markdown** included in bundle | **`npm run build:llm`** (runs before **`npm run build`**). |
 | **EVVM** (deploy, CLI, Tempo testnet) | **`docs/EVVM_TEMPO.md`**, **`/evvm`**; deep: **`https://www.evvm.info/llms-full.txt`**. |
 | **MPPScan / OpenAPI** | **`GET /openapi.json`**; **`npm run discovery`** · **`docs/MPPSCAN_DISCOVERY.md`** |
-| **OpenClaw + extra capabilities** | Optional plugin: **`openclaw plugins install @anyway-sh/anyway-openclaw`** — then restart gateway if needed; see **`references/openclaw-dancetempo.md`** |
+| **OpenClaw + extra capabilities** | Optional plugin: **`openclaw plugins install @anyway-sh/anyway-openclaw`** — then restart gateway if needed; see **`references/openclaw-clinical-tempo.md`** |
 | **Promotion** of a fix for future agents | Short entry under **Successes** or **Failures** in **`CLAWHUB.md`** (no secrets). |
 | **TIP-20 mint** (`/nhs/tip20`) — issuer role + envelope `0x76` | **`CLAWHUB.md`** Success §10 / Failure §10; code **`src/tempoTip20Launch.ts`**. Mint needs **`ISSUER_ROLE`**; use **`writeContractSync(grantRole)`**, not **`grantRolesSync`** (batched tx type **0x76** breaks viem + browser wallets). |
 
@@ -53,7 +53,7 @@ Use this skill automatically when:
 1. **`@`** `public/llm-full.txt` for broad changes; **`@`** `CLAWHUB.md` when debugging past incidents.
 2. Project rules: repo root **`AGENTS.md`** or **`.cursor/rules`** if present — align with **`README.md`**.
 
-See **`references/openclaw-dancetempo.md`** for OpenClaw workspace file hints.
+See **`references/openclaw-clinical-tempo.md`** for OpenClaw workspace file hints.
 
 ---
 
@@ -69,7 +69,7 @@ See **`references/openclaw-dancetempo.md`** for OpenClaw workspace file hints.
 **Manual copy to OpenClaw skills dir (optional):**
 
 ```bash
-cp -r .cursor/skills/clawhub ~/.openclaw/skills/dancetempo-clawhub
+cp -r .cursor/skills/clawhub ~/.openclaw/skills/clinicaltempo-clawhub
 ```
 
 **ClawHub (publish):** Zip **`clawhub/`** (this folder) so the listing includes **`SKILL.md`**, **`references/`**, **`assets/`**, **`hooks/`**, **`scripts/`**. See **`README.md`** in this folder for a file manifest.
@@ -84,14 +84,14 @@ openclaw plugins install @anyway-sh/anyway-openclaw
 openclaw gateway restart
 ```
 
-Pair with: **this skill** (or [ClawHub listing](https://clawhub.ai/arunnadarasa/dancetempo)) + optional **`dancetempo-clawhub`** hook. Details: **`references/openclaw-dancetempo.md`**.
+Pair with: **this skill** (or [ClawHub listing](https://clawhub.ai/arunnadarasa/clinicaltempo)) + optional **`clinicaltempo-clawhub`** hook. Details: **`references/openclaw-clinical-tempo.md`**.
 
 ---
 
 ## Repository map (where to look)
 
 ```
-dancetempo/
+clinicaltempo/
 ├── public/llm-full.txt          # Generated — do not hand-edit; run npm run build:llm
 ├── CLAWHUB.md                   # Tribal knowledge: successes, failures, checklists
 ├── README.md                    # Routes, stack, quick start
@@ -181,7 +181,7 @@ GitHub Copilot does not load this folder automatically. Options:
 From repo root (optional):
 
 ```bash
-./.cursor/skills/clawhub/scripts/verify-dancetempo-context.sh
+./.cursor/skills/clawhub/scripts/verify-clinical-tempo-context.sh
 ```
 
 Checks that **`public/llm-full.txt`** exists and reminds you of the live MPP **`GET`** check.
@@ -190,20 +190,20 @@ Checks that **`public/llm-full.txt`** exists and reminds you of the live MPP **`
 
 ## OpenClaw hook (optional)
 
-Parity with [self-improving-agent](https://clawhub.ai/pskoett/self-improving-agent): injects a **virtual** `DANCETEMPO_CONTEXT_REMINDER.md` on **`agent:bootstrap`** (skips sub-agents). No network I/O.
+Parity with [self-improving-agent](https://clawhub.ai/pskoett/self-improving-agent): injects a **virtual** `CLINICAL_TEMPO_CONTEXT_REMINDER.md` on **`agent:bootstrap`** (skips sub-agents). No network I/O.
 
 ```bash
 # From this skill folder (or repo: .cursor/skills/clawhub/)
-cp -r hooks/openclaw ~/.openclaw/hooks/dancetempo-clawhub
+cp -r hooks/openclaw ~/.openclaw/hooks/clinicaltempo-clawhub
 
-openclaw hooks enable dancetempo-clawhub
+openclaw hooks enable clinicaltempo-clawhub
 ```
 
 - **`hooks/openclaw/HOOK.md`** — metadata + enable/disable.
 - **`hooks/openclaw/handler.js`** — CommonJS handler (primary).
 - **`hooks/openclaw/handler.ts`** — TypeScript handler for OpenClaw (types from **`openclaw/hooks`** at runtime).
 
-Full notes: **`references/openclaw-dancetempo.md`**.
+Full notes: **`references/openclaw-clinical-tempo.md`**.
 
 ---
 
@@ -293,7 +293,7 @@ Then replace the scaffold under **`.cursor/skills/my-org-skill/`** using **`asse
 | `README.md` | Package manifest + upload notes for ClawHub |
 | `_meta.sample.json` | Rename to `_meta.json` after ClawHub assigns IDs (optional) |
 | `references/copilot-and-agents.md` | Paste blocks for Copilot / chat |
-| `references/openclaw-dancetempo.md` | OpenClaw workspace + Anyway plugin |
+| `references/openclaw-clinical-tempo.md` | OpenClaw workspace + Anyway plugin |
 | `references/openclaw-integration.md` | Full OpenClaw + ClawHub install guide |
 | `references/hooks-setup.md` | Claude Code / Codex hook paths for `activator.sh` |
 | `references/examples.md` | Concrete @-mentions, curls, patterns |
@@ -302,7 +302,7 @@ Then replace the scaffold under **`.cursor/skills/my-org-skill/`** using **`asse
 | `assets/SKILL-TEMPLATE.md` | Templates for new skills / forks |
 | `assets/templates/CLAWHUB-ENTRY.md` | Success / Failure append shapes |
 | `assets/learnings/*.md` | Optional LRN-style stubs (repo uses **`CLAWHUB.md`**) |
-| `scripts/verify-dancetempo-context.sh` | Quick repo checks |
+| `scripts/verify-clinical-tempo-context.sh` | Quick repo checks |
 | `scripts/activator.sh` | Optional UserPromptSubmit reminder |
 | `scripts/error-detector.sh` | Optional PostToolUse (Bash) hint |
 | `scripts/extract-skill.sh` | Scaffold **`.cursor/skills/<slug>/`** |
@@ -315,7 +315,7 @@ Then replace the scaffold under **`.cursor/skills/my-org-skill/`** using **`asse
 
 ## See also
 
-- **Published skill:** [clawhub.ai/arunnadarasa/dancetempo](https://clawhub.ai/arunnadarasa/dancetempo) — browse **[ClawHub](https://clawhub.ai/)** for versioned skills
+- **Published skill:** [clawhub.ai/arunnadarasa/clinicaltempo](https://clawhub.ai/arunnadarasa/clinicaltempo) — browse **[ClawHub](https://clawhub.ai/)** for versioned skills
 - **Ecosystem synergy (mpp-nanogpt-modal, nanochat, OpenClaw):** **`docs/ECOSYSTEM_SYNERGY.md`**
 - Structural inspiration: [self-improving-agent](https://clawhub.ai/pskoett/self-improving-agent) (references, assets, scripts, hooks, `.learnings` patterns)
 - Clinical Tempo repo: **`README.md`**, **`CLAWHUB.md`**

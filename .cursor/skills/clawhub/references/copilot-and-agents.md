@@ -2,9 +2,9 @@
 
 Use in **GitHub Copilot** instructions, **Claude** project knowledge, or **Codex** project docs.
 
-**Published skill:** [clawhub.ai/arunnadarasa/dancetempo](https://clawhub.ai/arunnadarasa/dancetempo)
+**Published skill:** [clawhub.ai/arunnadarasa/clinicaltempo](https://clawhub.ai/arunnadarasa/clinicaltempo)
 
-**OpenClaw (optional):** `openclaw plugins install @anyway-sh/anyway-openclaw` — pairs with this project’s skill; see `references/openclaw-dancetempo.md`.
+**OpenClaw (optional):** `openclaw plugins install @anyway-sh/anyway-openclaw` — pairs with this project’s skill; see `references/openclaw-clinical-tempo.md`.
 
 ---
 

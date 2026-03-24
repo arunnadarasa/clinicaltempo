@@ -9,18 +9,18 @@ Complete setup guide for using **this skill** with [OpenClaw](https://openclaw.a
 | **`public/llm-full.txt`** | One-shot repo orientation (regenerate: `npm run build:llm`)
 | **`CLAWHUB.md`** | Tribal debugging — successes, failures, checklists
 | **This skill** (`SKILL.md`) | Tells agents *where* to find the above and *common traps*
-| **Optional hook** `dancetempo-clawhub` | Injects bootstrap reminder (`hooks/openclaw/`)
+| **Optional hook** `clinicaltempo-clawhub` | Injects bootstrap reminder (`hooks/openclaw/`)
 
 ## Install the skill
 
 ### From ClawHub (recommended)
 
-Browse **[clawhub.ai](https://clawhub.ai/)**, find **Clinical Tempo** / **`arunnadarasa/dancetempo`**, and install with the site’s CLI (or download the zip).
+Browse **[clawhub.ai](https://clawhub.ai/)**, find **Clinical Tempo** / **`arunnadarasa/clinicaltempo`**, and install with the site’s CLI (or download the zip).
 
 Example (when the CLI supports your listing slug):
 
 ```bash
-npx clawhub@latest install arunnadarasa/dancetempo
+npx clawhub@latest install arunnadarasa/clinicaltempo
 ```
 
 If the CLI syntax differs, use the **Publish** page instructions on the site.
@@ -29,8 +29,7 @@ If the CLI syntax differs, use the **Publish** page instructions on the site.
 
 ```bash
 git clone https://github.com/arunnadarasa/clinicaltempo.git
-cp -r clinicaltempo/.cursor/skills/clawhub ~/.openclaw/skills/dancetempo-clawhub
-# Alternate remote with identical tree: https://github.com/arunnadarasa/dancetempo.git
+cp -r clinicaltempo/.cursor/skills/clawhub ~/.openclaw/skills/clinicaltempo-clawhub
 ```
 
 Skill entry file: **`SKILL.md`** inside that folder.
@@ -51,10 +50,10 @@ After publishing on ClawHub, you may copy **`_meta.sample.json`** → **`_meta.j
 │   ├── TOOLS.md
 │   └── MEMORY.md
 ├── skills/
-│   └── dancetempo-clawhub/   # or: clawhub from repo path
+│   └── clinicaltempo-clawhub/   # or: clawhub from repo path
 │       └── SKILL.md
 └── hooks/
-    └── dancetempo-clawhub/   # optional — copy from skill/hooks/openclaw
+    └── clinicaltempo-clawhub/   # optional — copy from skill/hooks/openclaw
         ├── HOOK.md
         └── handler.js
 ```
@@ -82,16 +81,16 @@ Minimum blurb for workspace **`AGENTS.md`**:
 
 ## Install the hook (optional)
 
-Injects **`DANCETEMPO_CONTEXT_REMINDER.md`** on **`agent:bootstrap`**. No network I/O.
+Injects **`CLINICAL_TEMPO_CONTEXT_REMINDER.md`** on **`agent:bootstrap`**. No network I/O.
 
 ```bash
-cp -r /path/to/dancetempo/.cursor/skills/clawhub/hooks/openclaw ~/.openclaw/hooks/dancetempo-clawhub
-openclaw hooks enable dancetempo-clawhub
+cp -r /path/to/clinicaltempo/.cursor/skills/clawhub/hooks/openclaw ~/.openclaw/hooks/clinicaltempo-clawhub
+openclaw hooks enable clinicaltempo-clawhub
 ```
 
-Disable: `openclaw hooks disable dancetempo-clawhub`
+Disable: `openclaw hooks disable clinicaltempo-clawhub`
 
-Details: **`hooks/openclaw/HOOK.md`**, **`references/openclaw-dancetempo.md`**.
+Details: **`hooks/openclaw/HOOK.md`**, **`references/openclaw-clinical-tempo.md`**.
 
 ---
 
@@ -103,7 +102,7 @@ Separate npm package — extra OpenClaw runtime capabilities:
 openclaw plugins install @anyway-sh/anyway-openclaw
 ```
 
-See **`references/openclaw-dancetempo.md`**.
+See **`references/openclaw-clinical-tempo.md`**.
 
 ---
 

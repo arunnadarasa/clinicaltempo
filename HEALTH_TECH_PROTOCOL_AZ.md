@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | **Protocol** | HealthTech Protocol — pattern stack for **neighbourhood health** and care-ops money flows on **Tempo** + **MPP/x402** |
-| **Reference app** | **Clinical Tempo** — [`github.com/arunnadarasa/dancetempo`](https://github.com/arunnadarasa/dancetempo) |
+| **Reference app** | **Clinical Tempo** — [`github.com/arunnadarasa/clinicaltempo`](https://github.com/arunnadarasa/clinicaltempo) |
 | **Settlement** | [Tempo](https://tempo.xyz) (L1 tuned for payments) |
 | **Machine payments** | [Machine Payments Protocol (MPP)](https://mpp.dev) · [Service catalog](https://mpp.dev/services) |
 
@@ -53,7 +53,7 @@ Both map to MPP semantics and show up across hub copy and `HEALTHTECH_USE_CASES.
 
 - **Frontend:** React, TypeScript, Vite.  
 - **Backend:** Express 5, payment verification, `402` passthrough, proxies.  
-- **Repo:** [`github.com/arunnadarasa/dancetempo`](https://github.com/arunnadarasa/dancetempo) — clone, configure `.env`, run `npm run dev:full`.
+- **Repo:** [`github.com/arunnadarasa/clinicaltempo`](https://github.com/arunnadarasa/clinicaltempo) — clone, configure `.env`, run `npm run dev:full`.
 
 ---
 
@@ -222,9 +222,9 @@ The protocol is **patterns + reference code**, not a single vendor gate. Swap in
 
 **Sub:** *Built on Tempo & MPP. Ship faster with the open Clinical Tempo reference app.*
 
-**Primary button:** [View on GitHub](https://github.com/arunnadarasa/dancetempo)
+**Primary button:** [View on GitHub](https://github.com/arunnadarasa/clinicaltempo)
 
-**Secondary:** [Try the docs — README](https://github.com/arunnadarasa/dancetempo/blob/main/README.md)
+**Secondary:** [Try the docs — README](https://github.com/arunnadarasa/clinicaltempo/blob/main/README.md)
 
 ---
 
@@ -239,4 +239,4 @@ The protocol is **patterns + reference code**, not a single vendor gate. Swap in
 
 ---
 
-*This file is maintained for landing-page and handoff use. Protocol naming: **HealthTech Protocol**; implementation / app: **Clinical Tempo** · [`github.com/arunnadarasa/dancetempo`](https://github.com/arunnadarasa/dancetempo).*
+*This file is maintained for landing-page and handoff use. Protocol naming: **HealthTech Protocol**; implementation / app: **Clinical Tempo** · [`github.com/arunnadarasa/clinicaltempo`](https://github.com/arunnadarasa/clinicaltempo).*

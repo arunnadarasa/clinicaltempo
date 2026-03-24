@@ -105,7 +105,7 @@ export default function NhsHubApp() {
             </p>
             <p className="note">
               Paid demo uses Stripe’s hosted test (0.01 USDC). Tempo NHS routes are documented separately in{' '}
-              <code>docs/PURL_DANCETEMPO.md</code>.
+              <code>docs/PURL_CLINICAL_TEMPO.md</code>.
             </p>
             <div className="actions">
               <a className="secondary button-like" href="/nhs/purl">

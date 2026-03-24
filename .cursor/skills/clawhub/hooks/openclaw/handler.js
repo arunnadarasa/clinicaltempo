@@ -6,7 +6,7 @@
 const REMINDER_CONTENT = `
 ## Clinical Tempo context (ClawHub skill)
 
-**Published skill:** https://clawhub.ai/arunnadarasa/dancetempo
+**Published skill:** https://clawhub.ai/arunnadarasa/clinicaltempo
 
 **OpenClaw (optional):** \`openclaw plugins install @anyway-sh/anyway-openclaw\`
 
@@ -54,7 +54,7 @@ const handler = async (event) => {
   const files = ctx.bootstrapFiles;
   if (Array.isArray(files)) {
     files.push({
-      path: 'DANCETEMPO_CONTEXT_REMINDER.md',
+      path: 'CLINICAL_TEMPO_CONTEXT_REMINDER.md',
       content: REMINDER_CONTENT,
       virtual: true,
     });
