@@ -3,6 +3,23 @@ import NhsShell from './NhsShell'
 import { clearNhsTxHistory, explorerUrl, listNhsTxHistory, type NhsTxItem } from './nhsTxHistory'
 import { getStoredNetwork } from './nhsSession'
 
+/** Clickable href for the transaction reference: Tempo receipt (on-chain) or in-app deep link (audit). */
+function transactionReferenceLink(row: NhsTxItem): { href: string; external: boolean } | null {
+  const chain = explorerUrl(row.network, row.txHash)
+  if (chain) return { href: chain, external: true }
+  if (
+    row.auditRef?.startsWith('gpr_') &&
+    row.endpoint.includes('gp-access') &&
+    !row.endpoint.includes('/gp-access/requests/')
+  ) {
+    return {
+      href: `/nhs/gp-access?requestId=${encodeURIComponent(row.auditRef)}`,
+      external: false,
+    }
+  }
+  return null
+}
+
 export default function NhsTransactionsApp() {
   const [rows, setRows] = useState<NhsTxItem[]>(() => listNhsTxHistory())
   const [tab, setTab] = useState<'testnet' | 'mainnet'>(() => getStoredNetwork())
@@ -65,6 +82,7 @@ export default function NhsTransactionsApp() {
                           : row.txHash.length > 22
                             ? `${row.txHash.slice(0, 10)}…${row.txHash.slice(-8)}`
                             : row.txHash
+                      const refLink = transactionReferenceLink(row)
                       return (
                         <tr key={`${row.txHash}-${row.createdAt}`}>
                           <td>{new Date(row.createdAt).toLocaleString()}</td>
@@ -77,13 +95,25 @@ export default function NhsTransactionsApp() {
                             </span>
                           </td>
                           <td>
-                            <code title={row.txHash}>{refLabel}</code>
+                            {refLink ? (
+                              <a
+                                href={refLink.href}
+                                title={row.txHash}
+                                {...(refLink.external ? { target: '_blank', rel: 'noreferrer' } : {})}
+                              >
+                                <code>{refLabel}</code>
+                              </a>
+                            ) : (
+                              <code title={row.txHash}>{refLabel}</code>
+                            )}
                           </td>
                           <td>
                             {link ? (
                               <a href={link} target="_blank" rel="noreferrer">
                                 View receipt
                               </a>
+                            ) : refLink && !refLink.external ? (
+                              <a href={refLink.href}>Open in app</a>
                             ) : (
                               <span className="tx-muted">—</span>
                             )}

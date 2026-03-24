@@ -15,7 +15,10 @@ type GpGetResponse = {
 export default function NhsGpAccessApp() {
   const [requestText, setRequestText] = useState('Shortness of breath and persistent cough for 3 days.')
   const [priority, setPriority] = useState<'routine' | 'high'>('routine')
-  const [requestId, setRequestId] = useState('')
+  const [requestId, setRequestId] = useState(() => {
+    if (typeof window === 'undefined') return ''
+    return new URLSearchParams(window.location.search).get('requestId') ?? ''
+  })
   const [status, setStatus] = useState('Idle')
   const [lookup, setLookup] = useState<GpGetResponse | null>(null)
   const [txUrl, setTxUrl] = useState<string | null>(null)

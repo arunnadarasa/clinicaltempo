@@ -231,6 +231,16 @@ pre {
   word-break: break-all;
 }
 
+.tx-table a {
+  color: var(--brand);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.tx-table a:hover {
+  text-decoration: underline;
+}
+
 .tx-badge {
   display: inline-block;
   padding: 0.15rem 0.45rem;
