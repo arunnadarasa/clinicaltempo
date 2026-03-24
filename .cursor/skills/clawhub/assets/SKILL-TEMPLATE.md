@@ -1,16 +1,17 @@
-# Skill template (fork from `clawhub`)
+# Skill templates (Clinical Tempo / ClawHub)
 
-Use this when publishing a **variant** skill (e.g. org-specific). Replace bracketed fields.
+Fork **this** skill or scaffold with **`scripts/extract-skill.sh`**. Follow the [Agent Skills](https://agentskills.io/specification) convention: YAML frontmatter, **`SKILL.md`** entry, no secrets.
 
 ---
 
-## `SKILL.md` skeleton
+## Full `SKILL.md` skeleton
 
 ```markdown
 ---
 name: your-skill-slug
 description: >-
-  One paragraph: product, when to use, key files (llm-full.txt, CLAWHUB), and out-of-repo links.
+  One paragraph: product, when to use, concrete triggers (like self-improving-agent),
+  key paths (e.g. llm-full.txt, CLAWHUB.md), and out-of-repo links.
 metadata: {}
 ---
 
@@ -22,18 +23,71 @@ metadata: {}
 | --- | --- |
 | … | … |
 
-## Installation
+## OpenClaw / ClawHub
 
-/path or git clone …
+- Install: see your README; publish zip to [clawhub.ai](https://clawhub.ai/)
+- Optional `_meta.json`: copy `_meta.sample.json` after publish
 
-## References
+## Repository map
 
-- `references/examples.md`
+…
+
+## Best practices
+
+…
+
+## Files in this package
+
+| Path | Purpose |
+| --- | --- |
+| `SKILL.md` | Entry |
+| `README.md` | Manifest + publish notes |
+| `references/` | Deep dives |
+| `assets/` | Templates |
+| `scripts/` | Helpers |
+| `hooks/openclaw/` | Optional OpenClaw hook |
+
+## See also
+
+- Reference implementation: **Clinical Tempo** `.cursor/skills/clawhub/`
 ```
 
-## Checklist
+---
 
-- [ ] `description` lists **concrete triggers** (like self-improving-agent).
-- [ ] **Quick reference** table at top.
-- [ ] **Files** table at bottom listing package paths.
-- [ ] No secrets; env names only from **`.env.example`**.
+## Minimal skeleton
+
+```markdown
+---
+name: your-skill-slug
+description: "What this does and when to activate."
+metadata: {}
+---
+
+# Title
+
+## Quick reference
+
+| Situation | Action |
+| --- | --- |
+| … | … |
+
+## Solution
+
+…
+```
+
+---
+
+## Naming
+
+- **Slug:** lowercase, hyphens (`dancetempo-clawhub`, `api-timeout-patterns`)
+- **Description:** lead with triggers (“Use when: (1) … (2) …”)
+
+---
+
+## Extraction checklist
+
+- [ ] `description` lists **triggers** and **files**
+- [ ] Quick reference table is actionable
+- [ ] No secrets; env names only from **`.env.example`**
+- [ ] `README.md` explains zip layout for ClawHub upload

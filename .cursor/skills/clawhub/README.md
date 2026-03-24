@@ -1,36 +1,84 @@
-# `clawhub` — Clinical Tempo context skill (ClawHub / Cursor)
+# `clawhub` — Clinical Tempo · [ClawHub](https://clawhub.ai/) skill
 
-This folder is the **authoritative** copy of the **ClawHub + Clinical Tempo** agent skill. It is versioned inside the [Clinical Tempo](https://github.com/arunnadarasa/dancetempo) repository under `.cursor/skills/clawhub/`.
+Authoritative copy: **`.cursor/skills/clawhub/`** in [Clinical Tempo / dancetempo](https://github.com/arunnadarasa/dancetempo).
 
-**Published listing:** [clawhub.ai/arunnadarasa/dancetempo](https://clawhub.ai/arunnadarasa/dancetempo) — upload a fresh zip here when you change the skill.
+**Published listing:** [clawhub.ai/arunnadarasa/dancetempo](https://clawhub.ai/arunnadarasa/dancetempo)
 
-**OpenClaw (optional):** `openclaw plugins install @anyway-sh/anyway-openclaw` — **Anyway** runtime plugin (npm); complements this skill (see `references/openclaw-dancetempo.md`).
+**Rigor model:** Same **package shape** as [self-improving-agent](https://clawhub.ai/pskoett/self-improving-agent) — `SKILL.md`, `references/`, `assets/` (templates + optional learnings stubs), `scripts/` (verify, activator, error-detector, extract-skill), `hooks/openclaw/`, optional `_meta.json` after publish.
+
+---
 
 ## Purpose
 
-- Point agents at **`public/llm-full.txt`** (full repo bundle) and **`CLAWHUB.md`** (tribal debugging).
-- Document Tempo + MPP + server patterns without duplicating the whole README.
+- Point agents at **`public/llm-full.txt`** (full bundle) and **`CLAWHUB.md`** (tribal debugging).
+- Document Tempo, MPP/x402, NHS, TIP-20, EVVM, OpenAPI — without duplicating the whole repo.
 
-## Publishing to ClawHub
+---
 
-1. Zip **this entire folder** (`clawhub/`) so uploads include:
-   - `SKILL.md`
-   - `README.md` (this file)
-   - `references/*`
-   - `assets/*`
-   - `scripts/*`
-   - `hooks/openclaw/*`
-2. Optionally set **`_meta.sample.json`** → rename to **`_meta.json`** and fill fields **after** ClawHub provides IDs (or use the site UI only).
+## Zip layout (upload to ClawHub)
 
-## Layout (compare: self-improving-agent)
+Include **everything** below so installers get hooks + scripts:
 
-| self-improving-agent | dancetempo-clawhub |
+| Path | Notes |
 | --- | --- |
-| `.learnings/*` templates | Use repo **`CLAWHUB.md`** instead |
-| `hooks/openclaw/*` | **`hooks/openclaw/`** — `dancetempo-clawhub` bootstrap reminder (see **`HOOK.md`**) |
-| `references/examples.md` | **`references/examples.md`** |
-| `scripts/*.sh` | **`scripts/verify-dancetempo-context.sh`** |
+| `SKILL.md` | **Required** — entrypoint |
+| `README.md` | This file |
+| `_meta.sample.json` | Rename to `_meta.json` after ClawHub assigns IDs (optional) |
+| `references/` | All `*.md` |
+| `assets/` | `LLM-BUNDLE-SOURCES.md`, `SKILL-TEMPLATE.md`, `templates/`, `learnings/` |
+| `scripts/` | `verify-dancetempo-context.sh`, `activator.sh`, `error-detector.sh`, `extract-skill.sh` (executable) |
+| `hooks/openclaw/` | `HOOK.md`, `handler.js`, `handler.ts` |
+| `hooks/README.md` | Hook index |
 
-## Maintenance
+Do **not** zip `.git` or secrets.
 
-When **`scripts/build-llm-full.mjs`** gains or loses files, update **`assets/LLM-BUNDLE-SOURCES.md`** and run **`npm run build:llm`**.
+---
+
+## Install (consumers)
+
+### ClawHub site
+
+Use **Install** on [clawhub.ai](https://clawhub.ai/) or the documented CLI, e.g.:
+
+```bash
+npx clawhub@latest install arunnadarasa/dancetempo
+```
+
+(Syntax may vary — follow the live site.)
+
+### From git
+
+```bash
+git clone https://github.com/arunnadarasa/dancetempo.git
+cp -r dancetempo/.cursor/skills/clawhub ~/.openclaw/skills/dancetempo-clawhub
+```
+
+### OpenClaw hook (optional)
+
+```bash
+cp -r hooks/openclaw ~/.openclaw/hooks/dancetempo-clawhub
+openclaw hooks enable dancetempo-clawhub
+```
+
+### Anyway plugin (optional)
+
+```bash
+openclaw plugins install @anyway-sh/anyway-openclaw
+```
+
+---
+
+## Maintainer checklist
+
+- [ ] After editing **`scripts/build-llm-full.mjs`** inputs, update **`assets/LLM-BUNDLE-SOURCES.md`**
+- [ ] Run **`npm run build:llm`** before release if docs changed
+- [ ] Bump **`_meta.sample.json`** version when publishing a new zip
+- [ ] Append non-secret incidents to **`CLAWHUB.md`** in the repo
+
+---
+
+## See also
+
+- **`SKILL.md`** — full skill body
+- **`references/openclaw-integration.md`** — OpenClaw + ClawHub end-to-end
+- **`references/hooks-setup.md`** — Claude Code hook JSON

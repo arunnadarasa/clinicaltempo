@@ -2,14 +2,14 @@
 name: clawhub
 description: >-
   Clinical Tempo / HealthTech Protocol — full repo context via public/llm-full.txt (or /llm-full.txt),
-  tribal debugging via CLAWHUB.md, Tempo + MPP/x402 patterns, dance-extras live routes, EVVM on
-  Tempo testnet. Use when: (1) Onboarding an agent or pasting system context, (2) Debugging 402/MPP,
-  stale API, or port 8787 issues, (3) Editing docs that feed llm-full.txt, (4) Working on hub routes,
-  server/index.js, or integrations (AgentMail, purl, OpenAI MPP, etc.), (5) EVVM deploy/docs,
-  (6) Preparing a ClawHub or Copilot instruction bundle, (7) MPPScan/OpenAPI discovery at
-  GET /openapi.json, (8) OpenClaw runtime — optional **@anyway-sh/anyway-openclaw** plugin
-  (`openclaw plugins install @anyway-sh/anyway-openclaw`). For raw EVVM protocol depth, fetch
-  https://www.evvm.info/llms-full.txt (not vendored in-repo).
+  tribal debugging via CLAWHUB.md, Tempo + MPP/x402 patterns, NHS routes, TIP-20 (viem/tempo),
+  dance-extras live routes, EVVM on Tempo testnet. Use when: (1) Onboarding an agent or pasting
+  system context, (2) Debugging 402/MPP, stale API, or port 8787 issues, (3) Editing docs that feed
+  llm-full.txt, (4) Working on hub routes, server/index.js, or integrations (AgentMail, purl, OpenAI
+  MPP, etc.), (5) EVVM deploy/docs, (6) Preparing a ClawHub or Copilot instruction bundle, (7)
+  MPPScan/OpenAPI discovery at GET /openapi.json, (8) OpenClaw — optional **@anyway-sh/anyway-openclaw**
+  plugin, (9) Publishing or consuming a ClawHub skill zip modeled on self-improving-agent rigor.
+  For raw EVVM protocol depth, fetch https://www.evvm.info/llms-full.txt (not vendored in-repo).
 metadata: {}
 ---
 
@@ -216,19 +216,96 @@ Full notes: **`references/openclaw-dancetempo.md`**.
 
 ---
 
+## Operations manual (same rigor as [self-improving-agent](https://clawhub.ai/pskoett/self-improving-agent))
+
+This skill mirrors that package’s **shape**: quick reference, OpenClaw integration, optional hooks/scripts, templates, and promotion — but maps “project memory” to **`CLAWHUB.md`** + **`README.md`** instead of only **`.learnings/`**.
+
+### Promotion targets (where tribal knowledge goes)
+
+| Finding | Promote to |
+| --- | --- |
+| Incident / workaround / “what broke” | **`CLAWHUB.md`** Successes or Failures |
+| Stable routes, ports, env **names**, stack facts | **`README.md`**, **`HEALTHTECH_USE_CASES.md`**, or **`docs/*.md`**, then **`npm run build:llm`** |
+| IDE default context | **`.github/copilot-instructions.md`** |
+| OpenClaw workspace behavior | Workspace **`AGENTS.md` / `TOOLS.md`** (see **`references/openclaw-integration.md`**) |
+
+Entry templates: **`assets/templates/CLAWHUB-ENTRY.md`**.
+
+### Optional: `.learnings/` format (LRN / ERR / FEAT)
+
+If you maintain a **parallel** log (e.g. in OpenClaw workspace), use the same ID patterns as self-improving-agent (**`LRN-YYYYMMDD-XXX`**, etc.). Starters ship under **`assets/learnings/`**. **Authoritative for this repo** remains **`CLAWHUB.md`**.
+
+### Periodic review (before a large change)
+
+```bash
+# Grep CLAWHUB for an area
+rg -n "MPP|402|8787|TIP-20|purl" CLAWHUB.md
+
+# Confirm bundle is fresh after doc edits
+npm run build:llm
+
+# Smoke API (server must run on 8787)
+curl -sS http://127.0.0.1:8787/api/dance-extras/live | head -c 400
+```
+
+### Detection triggers (load this skill when)
+
+- User mentions **`llm-full.txt`**, **`CLAWHUB`**, **Clinical Tempo**, **HealthTech**, **Tempo**, **MPP**, **`402`**, **NHS**, **TIP-20**, **8787**, **ClawHub**, or **OpenClaw**.
+- Editing **`server/index.js`**, **`scripts/build-llm-full.mjs`**, or **`src/hubRoutes.ts`**.
+- Preparing a **zip** for [clawhub.ai](https://clawhub.ai/) or debugging a **published** install.
+
+### Claude Code / Codex hooks (optional)
+
+| Script | Role |
+| --- | --- |
+| **`scripts/activator.sh`** | Small XML-tagged reminder after each prompt (`UserPromptSubmit`) |
+| **`scripts/error-detector.sh`** | Optional hint after Bash failures (`PostToolUse`) |
+
+Configure **`.claude/settings.json`** or **`.codex/settings.json`** — full paths in **`references/hooks-setup.md`**.
+
+### Multi-agent matrix
+
+| Agent | How this skill applies |
+| --- | --- |
+| **Cursor** | `@` **`public/llm-full.txt`** + **`CLAWHUB.md`**; rules in **`.cursor/rules`** if present |
+| **GitHub Copilot** | **`.github/copilot-instructions.md`** + **`references/copilot-and-agents.md`** |
+| **OpenClaw** | Copy skill + optional **`hooks/openclaw`**; see **`references/openclaw-integration.md`** |
+| **Claude Code** | Optional **`activator.sh`** hook |
+
+### Skill extraction (new package from a fix)
+
+When a CLAWHUB entry is **reusable across repos**, consider a standalone skill:
+
+```bash
+./.cursor/skills/clawhub/scripts/extract-skill.sh my-org-skill --dry-run
+./.cursor/skills/clawhub/scripts/extract-skill.sh my-org-skill
+```
+
+Then replace the scaffold under **`.cursor/skills/my-org-skill/`** using **`assets/SKILL-TEMPLATE.md`**.
+
+---
+
 ## Files in this package
 
 | Path | Purpose |
 | --- | --- |
 | `SKILL.md` | This file — primary skill entry |
 | `README.md` | Package manifest + upload notes for ClawHub |
+| `_meta.sample.json` | Rename to `_meta.json` after ClawHub assigns IDs (optional) |
 | `references/copilot-and-agents.md` | Paste blocks for Copilot / chat |
-| `references/openclaw-dancetempo.md` | OpenClaw workspace alignment |
+| `references/openclaw-dancetempo.md` | OpenClaw workspace + Anyway plugin |
+| `references/openclaw-integration.md` | Full OpenClaw + ClawHub install guide |
+| `references/hooks-setup.md` | Claude Code / Codex hook paths for `activator.sh` |
 | `references/examples.md` | Concrete @-mentions, curls, patterns |
 | `references/troubleshooting.md` | Common failures & fixes |
 | `assets/LLM-BUNDLE-SOURCES.md` | What feeds `llm-full.txt` |
-| `assets/SKILL-TEMPLATE.md` | Template for forking this skill |
+| `assets/SKILL-TEMPLATE.md` | Templates for new skills / forks |
+| `assets/templates/CLAWHUB-ENTRY.md` | Success / Failure append shapes |
+| `assets/learnings/*.md` | Optional LRN-style stubs (repo uses **`CLAWHUB.md`**) |
 | `scripts/verify-dancetempo-context.sh` | Quick repo checks |
+| `scripts/activator.sh` | Optional UserPromptSubmit reminder |
+| `scripts/error-detector.sh` | Optional PostToolUse (Bash) hint |
+| `scripts/extract-skill.sh` | Scaffold **`.cursor/skills/<slug>/`** |
 | `hooks/openclaw/HOOK.md` | OpenClaw hook manifest |
 | `hooks/openclaw/handler.js` | Bootstrap injector (CommonJS) |
 | `hooks/openclaw/handler.ts` | Bootstrap injector (TypeScript) |
@@ -238,7 +315,7 @@ Full notes: **`references/openclaw-dancetempo.md`**.
 
 ## See also
 
-- **Published skill:** [clawhub.ai/arunnadarasa/dancetempo](https://clawhub.ai/arunnadarasa/dancetempo)
+- **Published skill:** [clawhub.ai/arunnadarasa/dancetempo](https://clawhub.ai/arunnadarasa/dancetempo) — browse **[ClawHub](https://clawhub.ai/)** for versioned skills
 - **Ecosystem synergy (mpp-nanogpt-modal, nanochat, OpenClaw):** **`docs/ECOSYSTEM_SYNERGY.md`**
-- Upstream inspiration: [self-improving-agent](https://clawhub.ai/pskoett/self-improving-agent) (structure: references, assets, scripts, **hooks**).
-- Clinical Tempo repo: **`README.md`**, **`CLAWHUB.md`**.
+- Structural inspiration: [self-improving-agent](https://clawhub.ai/pskoett/self-improving-agent) (references, assets, scripts, hooks, `.learnings` patterns)
+- Clinical Tempo repo: **`README.md`**, **`CLAWHUB.md`**

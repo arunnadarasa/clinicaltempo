@@ -18,3 +18,7 @@ openclaw hooks enable dancetempo-clawhub
 ```
 
 See **`openclaw/HOOK.md`** for disable and behavior details.
+
+## Related (non-OpenClaw)
+
+For **Claude Code** / **Codex** session reminders, use **`../scripts/activator.sh`** and **`references/hooks-setup.md`** (different mechanism than OpenClaw hooks).
