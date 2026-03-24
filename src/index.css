@@ -180,6 +180,10 @@ pre {
   padding: 0.55rem 0.65rem;
 }
 
+.tx-note-tight {
+  margin-top: 0.35rem;
+}
+
 .note {
   margin-top: 0.5rem;
   color: var(--warn);
