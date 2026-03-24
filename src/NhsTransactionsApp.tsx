@@ -1,7 +1,13 @@
 import { useMemo, useState } from 'react'
 import NhsShell from './NhsShell'
-import { clearNhsTxHistory, explorerUrl, listNhsTxHistory, type NhsTxItem } from './nhsTxHistory'
-import { getStoredNetwork } from './nhsSession'
+import {
+  clearNhsTxHistory,
+  explorerAddressUrl,
+  explorerUrl,
+  listNhsTxHistory,
+  type NhsTxItem,
+} from './nhsTxHistory'
+import { getStoredNetwork, getStoredWallet } from './nhsSession'
 
 /** Clickable href for the transaction reference: Tempo receipt (on-chain) or in-app deep link (audit). */
 function transactionReferenceLink(row: NhsTxItem): { href: string; external: boolean } | null {
@@ -23,13 +29,14 @@ function transactionReferenceLink(row: NhsTxItem): { href: string; external: boo
 export default function NhsTransactionsApp() {
   const [rows, setRows] = useState<NhsTxItem[]>(() => listNhsTxHistory())
   const [tab, setTab] = useState<'testnet' | 'mainnet'>(() => getStoredNetwork())
+  const wallet = getStoredWallet()
 
   const filtered = useMemo(() => rows.filter((row) => row.network === tab), [rows, tab])
 
   return (
     <NhsShell
       title="Transactions Audit"
-      subtitle="Audit MPP transaction hashes from NHS write actions. Rows without a chain receipt still appear as audit entries (e.g. payment gate off or direct mode). Switch between testnet and mainnet views."
+      subtitle="On-chain rows link the Tempo receipt. Audit rows have no receipt hash; Explorer opens your wallet on Tempo (same network as the row). Use MPP + payment gate for per-request receipt links. Switch testnet / mainnet to match the row."
     >
       {() => (
         <section className="grid">
@@ -83,6 +90,7 @@ export default function NhsTransactionsApp() {
                             ? `${row.txHash.slice(0, 10)}…${row.txHash.slice(-8)}`
                             : row.txHash
                       const refLink = transactionReferenceLink(row)
+                      const walletExplorer = explorerAddressUrl(row.network, wallet)
                       return (
                         <tr key={`${row.txHash}-${row.createdAt}`}>
                           <td>{new Date(row.createdAt).toLocaleString()}</td>
@@ -107,15 +115,28 @@ export default function NhsTransactionsApp() {
                               <code title={row.txHash}>{refLabel}</code>
                             )}
                           </td>
-                          <td>
+                          <td className="tx-explorer-cell">
                             {link ? (
                               <a href={link} target="_blank" rel="noreferrer">
                                 View receipt
                               </a>
-                            ) : refLink && !refLink.external ? (
-                              <a href={refLink.href}>Open in app</a>
                             ) : (
-                              <span className="tx-muted">—</span>
+                              <>
+                                {walletExplorer ? (
+                                  <a href={walletExplorer} target="_blank" rel="noreferrer">
+                                    Tempo explorer
+                                  </a>
+                                ) : (
+                                  <span className="tx-muted">Connect wallet</span>
+                                )}
+                                {refLink && !refLink.external ? (
+                                  <>
+                                    {' '}
+                                    <span className="tx-muted">·</span>{' '}
+                                    <a href={refLink.href}>In app</a>
+                                  </>
+                                ) : null}
+                              </>
                             )}
                           </td>
                         </tr>

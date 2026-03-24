@@ -241,6 +241,11 @@ pre {
   text-decoration: underline;
 }
 
+.tx-explorer-cell {
+  white-space: normal;
+  line-height: 1.45;
+}
+
 .tx-badge {
   display: inline-block;
   padding: 0.15rem 0.45rem;

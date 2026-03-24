@@ -51,3 +51,12 @@ export function explorerUrl(network: NhsNetwork, txHash: string): string | null 
     : `https://explore.testnet.tempo.xyz/receipt/${txHash}`
 }
 
+/** Wallet account page on Tempo explorer (useful when there is no `/receipt/0x…` for audit-only rows). */
+export function explorerAddressUrl(network: NhsNetwork, walletAddress: string): string | null {
+  const w = walletAddress.trim().toLowerCase()
+  if (!/^0x[a-f0-9]{8,}$/i.test(w)) return null
+  return network === 'mainnet'
+    ? `https://explore.tempo.xyz/address/${w}`
+    : `https://explore.testnet.tempo.xyz/address/${w}`
+}
+
