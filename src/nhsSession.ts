@@ -44,7 +44,8 @@ export function setStoredNetwork(network: NhsNetwork) {
 
 export function getStoredPaymentMode(): NhsPaymentMode {
   const raw = localStorage.getItem(PAYMENT_MODE_KEY)
-  return raw === 'mpp' ? 'mpp' : 'direct'
+  if (raw === 'direct') return 'direct'
+  return 'mpp'
 }
 
 export function setStoredPaymentMode(mode: NhsPaymentMode) {
