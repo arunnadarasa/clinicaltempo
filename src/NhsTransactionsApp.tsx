@@ -1,17 +1,18 @@
 import { useMemo, useState } from 'react'
 import NhsShell from './NhsShell'
 import { clearNhsTxHistory, explorerUrl, listNhsTxHistory, type NhsTxItem } from './nhsTxHistory'
+import { getStoredNetwork } from './nhsSession'
 
 export default function NhsTransactionsApp() {
   const [rows, setRows] = useState<NhsTxItem[]>(() => listNhsTxHistory())
-  const [tab, setTab] = useState<'testnet' | 'mainnet'>('testnet')
+  const [tab, setTab] = useState<'testnet' | 'mainnet'>(() => getStoredNetwork())
 
   const filtered = useMemo(() => rows.filter((row) => row.network === tab), [rows, tab])
 
   return (
     <NhsShell
       title="Transactions Audit"
-      subtitle="Audit MPP transaction hashes from NHS write actions. Switch between testnet and mainnet views."
+      subtitle="Audit MPP transaction hashes from NHS write actions. Rows without a chain receipt still appear as audit entries (e.g. payment gate off or direct mode). Switch between testnet and mainnet views."
     >
       {() => (
         <section className="grid">
@@ -45,6 +46,8 @@ export default function NhsTransactionsApp() {
                     filtered.map((row) => ({
                       network: row.network,
                       endpoint: row.endpoint,
+                      kind: row.kind,
+                      auditRef: row.auditRef,
                       txHash: row.txHash,
                       explorer: explorerUrl(row.network, row.txHash),
                       createdAt: row.createdAt,

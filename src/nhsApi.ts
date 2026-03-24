@@ -42,6 +42,16 @@ function toExplorerUrl(network: NhsNetwork, txHash: string): string {
     : `https://explore.testnet.tempo.xyz/receipt/${txHash}`
 }
 
+function auditRefFromPayload(payload: unknown): string {
+  if (!payload || typeof payload !== 'object') return ''
+  const o = payload as Record<string, unknown>
+  for (const k of ['id', 'patientId', 'referralId', 'alertId', 'planId']) {
+    const v = o[k]
+    if (typeof v === 'string' && v.trim()) return v.trim()
+  }
+  return ''
+}
+
 function txFromResponse(payload: unknown, res: Response): string | null {
   const paymentReceipt = res.headers.get('payment-receipt') || ''
   const payment = res.headers.get('payment') || ''
@@ -99,6 +109,17 @@ export async function apiPost<T>(
       network: opts.network,
       endpoint: path,
       createdAt: new Date().toISOString(),
+      kind: 'chain',
+    })
+  } else {
+    const auditRef = auditRefFromPayload(payload)
+    addNhsTxHistory({
+      txHash: `audit:${crypto.randomUUID()}`,
+      network: opts.network,
+      endpoint: path,
+      createdAt: new Date().toISOString(),
+      kind: 'audit',
+      ...(auditRef ? { auditRef } : {}),
     })
   }
   return {

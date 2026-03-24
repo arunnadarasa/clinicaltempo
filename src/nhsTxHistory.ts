@@ -1,10 +1,14 @@
 import type { NhsNetwork } from './nhsSession'
 
 export type NhsTxItem = {
+  /** MPP chain receipt (`0x…`) or synthetic `audit:…` id when no on-chain receipt was returned */
   txHash: string
   network: NhsNetwork
   endpoint: string
   createdAt: string
+  kind?: 'chain' | 'audit'
+  /** Entity id from API body when `kind` is audit */
+  auditRef?: string
 }
 
 const KEY = 'nhs_tx_history_v1'
@@ -17,6 +21,12 @@ export function listNhsTxHistory(): NhsTxItem[] {
     if (!Array.isArray(parsed)) return []
     return parsed
       .filter((item) => item && typeof item.txHash === 'string' && typeof item.network === 'string')
+      .map((item) => ({
+        ...item,
+        kind:
+          item.kind ??
+          (typeof item.txHash === 'string' && item.txHash.startsWith('0x') ? 'chain' : 'audit'),
+      }))
       .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
   } catch {
     return []
@@ -34,7 +44,8 @@ export function clearNhsTxHistory() {
   localStorage.removeItem(KEY)
 }
 
-export function explorerUrl(network: NhsNetwork, txHash: string) {
+export function explorerUrl(network: NhsNetwork, txHash: string): string | null {
+  if (!txHash.startsWith('0x')) return null
   return network === 'mainnet'
     ? `https://explore.tempo.xyz/receipt/${txHash}`
     : `https://explore.testnet.tempo.xyz/receipt/${txHash}`
