@@ -83,6 +83,15 @@ Core docs to reuse:
    - For “paid endpoints then poll” integrations:
      - use the correct auth header strategy for the paid + polling phases (x402 vs SIWX vs bearer-token style).
 
+9. **NHS routes: extracting the on-chain reference after `mppx.tempo.charge()`**
+   - `charge(fetchRequest)` resolves to **`{ status: 200 | 402, withReceipt(response) | challenge }`**. There is **no** `mppResponse.receipt` field — the verified receipt object exists only inside **`withReceipt()`**, which sets the **`Payment-Receipt`** header via `Receipt.serialize(receipt)`.
+   - **Wrong:** `mppResponse?.receipt?.reference` (always `undefined` on success).
+   - **Right:** after `status === 200`, derive the tx reference with one of:
+     - call **`mppResponse.withReceipt(new Response('{}', { headers: { 'Content-Type': 'application/json' } }))`**, then **`Receipt.fromResponse(wrapped).reference`** (canonical hash from Tempo verify), or
+     - parse **`Authorization: Payment …`** with **`Credential.deserialize`** and use **`payload.hash`** when `payload.type === 'hash'`, or
+     - if the inbound request already carries **`payment-receipt`**, **`Receipt.deserialize(header).reference`**.
+   - Implementation lives in **`server/nhs/payment.js`** (`resolvePaymentReceiptRef`). NHS **GP access** persists that value as **`gp_access_requests.receipt_ref`** and echoes **`receiptRef`** in JSON via **`withReceipt()`** in **`server/nhs/router.js`**. The client prefers **`payload.receiptRef`** in **`src/nhsApi.ts`** (`txFromResponse`) so local **Transactions** history can show **On-chain** rows even when response headers are thin.
+
 ---
 
 ## Failures (what broke) and how to recognize it
@@ -193,6 +202,17 @@ Core docs to reuse:
 **Fix**
 - Match `pathname === '/dance-extras' || pathname.startsWith('/dance-extras/')` so subpaths render `ExtraDanceApp`.
 
+### 9) NHS transaction history: only “Audit” rows, no `/tx/0x…` link
+
+**Symptom**
+- `/nhs/transactions` shows **Audit** rows for paid GP access; **Explorer** has no per-row tx link; **`receiptRef`** missing from API JSON.
+
+**Cause**
+- Server code assumed **`mppResponse.receipt.reference`** after `mppx.tempo.charge()`. That property does not exist — the receipt is only produced when **`withReceipt()`** runs on a `Response`, or when read from **`Payment-Receipt`** / credential **`payload.hash`**.
+
+**Fix**
+- Use **`resolvePaymentReceiptRef`** (see Success §9 and **`server/nhs/payment.js`**). Persist **`receipt_ref`** on **`gp_access_requests`** and return **`receiptRef`** in JSON. Ensure **`NHS_ENABLE_PAYMENT_GATE`** is not `false` if you expect on-chain receipts.
+
 ---
 
 ## Best practices (repeatable habits)
@@ -248,4 +268,5 @@ Core docs to reuse:
 4. Dev proxy: `vite.config.ts` (proxy `/api` -> `http://localhost:8787`)
 5. Dance-extras live MPP: `POST /api/dance-extras/live/:flowKey/:network`, verify with `GET /api/dance-extras/live`
 6. Demo AgentMail inbox constant: `src/agentmailDemo.ts`
+7. NHS payment gate + receipt reference: `server/nhs/payment.js`, `server/nhs/router.js`, `src/nhsApi.ts`; SQLite schema in `server/nhs/db.js` (`gp_access_requests.receipt_ref`)
 

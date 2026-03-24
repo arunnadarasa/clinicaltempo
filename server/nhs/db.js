@@ -40,6 +40,7 @@ CREATE TABLE IF NOT EXISTS gp_access_requests (
   priority TEXT NOT NULL,
   status TEXT NOT NULL,
   assigned_gp_wallet TEXT,
+  receipt_ref TEXT,
   created_at TEXT NOT NULL,
   updated_at TEXT NOT NULL
 );
@@ -139,6 +140,16 @@ CREATE TABLE IF NOT EXISTS audit_events (
   payload_json TEXT NOT NULL
 );
 `)
+
+function migrateNhsSchema() {
+  const gprCols = db.prepare(`PRAGMA table_info(gp_access_requests)`).all()
+  const gprNames = new Set(gprCols.map((c) => c.name))
+  if (!gprNames.has('receipt_ref')) {
+    db.exec(`ALTER TABLE gp_access_requests ADD COLUMN receipt_ref TEXT`)
+  }
+}
+
+migrateNhsSchema()
 
 function nowIso() {
   return new Date().toISOString()

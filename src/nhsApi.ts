@@ -71,6 +71,13 @@ function auditRefFromPayload(payload: unknown): string {
 }
 
 function txFromResponse(payload: unknown, res: Response): string | null {
+  if (payload && typeof payload === 'object') {
+    const o = payload as Record<string, unknown>
+    if (typeof o.receiptRef === 'string' && o.receiptRef.trim()) {
+      const fromReceipt = extractTxHash(o.receiptRef)
+      if (fromReceipt) return fromReceipt
+    }
+  }
   const paymentReceipt = res.headers.get('payment-receipt') || ''
   const payment = res.headers.get('payment') || ''
   const payloadString = (() => {

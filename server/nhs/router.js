@@ -51,6 +51,7 @@ export function createNhsRouter(deps) {
         priority,
         status: 'submitted',
         assigned_gp_wallet: null,
+        receipt_ref: paymentCtx.paymentReceiptRef ?? null,
         created_at: now,
         updated_at: now,
       })
@@ -71,7 +72,7 @@ export function createNhsRouter(deps) {
     const actor = getActor(req)
     if (actor.error) return res.status(400).json({ error: actor.error })
     const row = get(
-      `SELECT id, patient_id AS patientId, request_text AS requestText, priority, status, assigned_gp_wallet AS assignedGpWallet, created_at AS createdAt, updated_at AS updatedAt FROM gp_access_requests WHERE id = ?`,
+      `SELECT id, patient_id AS patientId, request_text AS requestText, priority, status, assigned_gp_wallet AS assignedGpWallet, receipt_ref AS receiptRef, created_at AS createdAt, updated_at AS updatedAt FROM gp_access_requests WHERE id = ?`,
       [req.params.id],
     )
     if (!row) return res.status(404).json({ error: 'Request not found.' })
