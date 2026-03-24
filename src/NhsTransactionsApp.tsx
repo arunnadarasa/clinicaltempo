@@ -9,7 +9,7 @@ import {
 } from './nhsTxHistory'
 import { getStoredNetwork, getStoredWallet } from './nhsSession'
 
-/** Clickable href for the transaction reference: Tempo receipt (on-chain) or in-app deep link (audit). */
+/** Clickable href for the transaction reference: Tempo /tx/ page (on-chain) or in-app deep link (audit). */
 function transactionReferenceLink(row: NhsTxItem): { href: string; external: boolean } | null {
   const chain = explorerUrl(row.network, row.txHash)
   if (chain) return { href: chain, external: true }
@@ -36,7 +36,7 @@ export default function NhsTransactionsApp() {
   return (
     <NhsShell
       title="Transactions Audit"
-      subtitle="On-chain rows link the Tempo receipt. Audit rows have no receipt hash; Explorer opens your wallet on Tempo (same network as the row). Use MPP + payment gate for per-request receipt links. Switch testnet / mainnet to match the row."
+      subtitle="On-chain rows link the Tempo transaction page (/tx/0x…). Audit rows have no tx hash; Explorer opens your wallet on Tempo. Use MPP + payment gate for per-request tx links. Match testnet / mainnet to the row."
     >
       {() => (
         <section className="grid">
@@ -118,7 +118,7 @@ export default function NhsTransactionsApp() {
                           <td className="tx-explorer-cell">
                             {link ? (
                               <a href={link} target="_blank" rel="noreferrer">
-                                View receipt
+                                View transaction
                               </a>
                             ) : (
                               <>

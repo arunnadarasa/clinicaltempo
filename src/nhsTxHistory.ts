@@ -47,11 +47,11 @@ export function clearNhsTxHistory() {
 export function explorerUrl(network: NhsNetwork, txHash: string): string | null {
   if (!txHash.startsWith('0x')) return null
   return network === 'mainnet'
-    ? `https://explore.tempo.xyz/receipt/${txHash}`
-    : `https://explore.testnet.tempo.xyz/receipt/${txHash}`
+    ? `https://explore.tempo.xyz/tx/${txHash}`
+    : `https://explore.testnet.tempo.xyz/tx/${txHash}`
 }
 
-/** Wallet account page on Tempo explorer (useful when there is no `/receipt/0x…` for audit-only rows). */
+/** Wallet account page on Tempo explorer (useful when there is no `/tx/0x…` for audit-only rows). */
 export function explorerAddressUrl(network: NhsNetwork, walletAddress: string): string | null {
   const w = walletAddress.trim().toLowerCase()
   if (!/^0x[a-f0-9]{8,}$/i.test(w)) return null

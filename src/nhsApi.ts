@@ -56,8 +56,8 @@ function extractTxHash(value: string): string | null {
 
 function toExplorerUrl(network: NhsNetwork, txHash: string): string {
   return network === 'mainnet'
-    ? `https://explore.tempo.xyz/receipt/${txHash}`
-    : `https://explore.testnet.tempo.xyz/receipt/${txHash}`
+    ? `https://explore.tempo.xyz/tx/${txHash}`
+    : `https://explore.testnet.tempo.xyz/tx/${txHash}`
 }
 
 function auditRefFromPayload(payload: unknown): string {
